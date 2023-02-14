@@ -22,4 +22,5 @@ class UserSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User
-        fields = ['name', 'nickname', 'email', 'password']
+        fields = ['name', 'nickname', 'email', 'password', 'point'] # 회원 가입시에는 point 항목이 보이지 않지만
+                                                                    # 회원 detail에는 point 항목이 보이게 하고싶다.
