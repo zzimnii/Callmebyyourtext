@@ -13,8 +13,20 @@
 # urlpatterns = format_suffix_patterns(urlpatterns)
 
 from django.urls import path, include
-
+from .api import RegisterAPI, LoginAPI, UserAPI
+from knox import views as knox_views
+ 
 urlpatterns = [
-    path('rest-auth/', include('rest_auth.urls')),
-    path('rest-auth/registration/', include('rest_auth.registration.urls')),
+    path('api.auth', include('knox.urls')),
+    path('api/auth/register', RegisterAPI.as_view()),
+    path('api/auth/login', LoginAPI.as_view()),
+    path('api/auth/user', UserAPI.as_view()),
+    path('api/auth/logout', knox_views.LogoutView.as_view(), name='knox_logout'),
 ]
+
+# from django.urls import path, include
+
+# urlpatterns = [
+#     path('rest-auth/', include('rest_auth.urls')),
+#     path('rest-auth/registration/', include('rest_auth.registration.urls')),
+# ]
