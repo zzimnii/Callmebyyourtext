@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .serializers import UserSerializer
+from .serializers import UserSerializer, UserPageSerializer
 from .models import User
 from rest_framework import generics
 
@@ -11,3 +11,7 @@ class UserCreate(generics.ListCreateAPIView):   # 회원 생성
 class UserDetail(generics.RetrieveUpdateDestroyAPIView):    # 회원 detail(수정, 삭제)
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+class UserPage(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserPageSerializer
