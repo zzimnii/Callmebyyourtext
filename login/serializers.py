@@ -1,30 +1,46 @@
 from .models import User
 from rest_framework import serializers
+from rest_framework.validators import UniqueValidator
+from django.contrib.auth.password_validation import validate_password
+from rest_framework.authtoken.models import Token
 
-class UserSerializer(serializers.ModelSerializer):
-    def create(self, validated_data):
-        # user = User.objects.create_user(
-        #     email = validated_data['email'],
-        #     nickname = validated_data['nickname'],
-        #     name = validated_data['name'],
-        #     password = validated_data['password'],
-        #     point = validated_data['point']
-        # )
-        # return user
-        user = User.objects.create_user(
-            email = validated_data.get('email'),
-            nickname = validated_data.get('nickname'),
-            name = validated_data.get('name'),
-            password = validated_data.get('password'),
-            point = 500
-        )
-        return user
-    
-    class Meta:
-        model = User
-        fields = ['name', 'nickname', 'email', 'password'] # 회원 가입시에는 point 항목이 보이지 않지만
-                                                                    # 회원 detail에는 point 항목이 보이게 하고싶다.
 class UserPageSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['name', 'nickname', 'email', 'password', 'point']
+
+class UserSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(
+        required=True,
+        validators=[UniqueValidator(queryset=User.objects.all())],
+    )
+    password = serializers.CharField(
+        write_only = True,
+        required=True,
+        validators=[validate_password],
+    )
+    password2 = serializers.CharField(write_only=True, required=True)
+
+    class Meta:
+        model=User
+        fields=['email', 'name', 'nickname', 'password', 'password2', ]
+
+    def validate(self, data):
+        if data['password'] != data['password2']:
+            raise serializers.ValidationError(
+                {"password": "Password fields didn't match"})
+
+        return data
+
+    def create(self, validated_data):
+        user = User.objects.create_user(
+            nickname=validated_data['nickname'],
+            email=validated_data['email'],
+            name=validated_data['name'],
+            point=500
+        )
+
+        user.set_password(validated_data['password'])
+        user.save()
+        # token = Token.objects.create(user=user)
+        return user
