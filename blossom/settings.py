@@ -31,18 +31,10 @@ INSTALLED_APPS = [
     'postapp',
     'rest_framework',
     'rest_framework.authtoken',
-    'rest_auth',
-    # 'django.contrib.sites',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'rest_auth.registration',
-    'django_filters',
-    'knox',
 ]
 REST_FRAMEWORK = {
 	'DEFAULT_AUTHENTICATION_CLASSED':
-    ('knox.auth.TokenAuthentication',)
+    ['rest_framework.authentication.TokenAuthentication', ],
 }
 
 MIDDLEWARE = [
