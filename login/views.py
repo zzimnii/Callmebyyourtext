@@ -1,17 +1,23 @@
-from django.shortcuts import render
-from .serializers import UserSerializer, UserPageSerializer
-from .models import User
-from rest_framework import generics
+from django.contrib.auth.models import User
+from rest_framework import generics, status
+from rest_framework.response import Response
 
-# 회원가입
-class UserCreate(generics.ListCreateAPIView):   # 회원 생성
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+from .serializers import RegisterSerializer, LoginSerializer, ProfileSerializer
+from .models import Profile
 
-class UserDetail(generics.RetrieveUpdateDestroyAPIView):    # 회원 detail(수정, 삭제)
+class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = RegisterSerializer
 
-class UserPage(generics.RetrieveAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserPageSerializer
+class LoginView(generics.GenericAPIView):
+    serializer_class = LoginSerializer
+
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        token = serializer.validated_data
+        return Response({"token": token.key}, status=status.HTTP_200_OK)
+    
+class ProfileView(generics.RetrieveUpdateAPIView):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
