@@ -25,8 +25,10 @@ class ProfileSerializer(serializers.ModelSerializer): # 전체 유저 정보 조
 class LoginSerializer(serializers.Serializer):  # 회원가입한 유저 로그인 
     email = serializers.EmailField(required=True)
     password = serializers.CharField(required=True, write_only=True)
-
-    def validation(self, data):
+    # class Meta:
+    #         model = User
+    #         fields = ['email', 'password']
+    def validate(self, data):
         user = authenticate(**data)
         if user:
             token = Token.objects.get(user=user)
