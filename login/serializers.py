@@ -6,9 +6,15 @@ class UserSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(
             email = validated_data['email'],
             name = validated_data['name'],
-            password = validated_data['password']
+            password = validated_data['password'],
+            nickname = validated_data['nickname']
         )
         return user
     class Meta:
         model = User
-        fields = ['email', 'name', 'password']
+        fields = ['email', 'name', 'nickname', 'password']
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = '__all__'
