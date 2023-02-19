@@ -11,7 +11,6 @@ class CommentSerializer(ModelSerializer):
         
 class CommentCreateSerializer(ModelSerializer):
     permission_classes = [AllowAny]
-    #comment_writer = ReadOnlyField(source = 'login.User')
     class Meta:
         model = Comment
         fields = ['id', 'question', 'comment', 'anonymous']
