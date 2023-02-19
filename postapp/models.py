@@ -18,15 +18,3 @@ class Comment(models.Model):
     # User로 불러와야함 onetoone or ForeignKey?
     def __str__(self):
         return self.comment
-
-
-class AnonymousComment(models.Model):
-    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="comments")     #질문 ID
-    ancomment = models.TextField()
-    # writer = models.ForeignKey('login.User', on_delete=models.CASCADE, related_name='comments', null = True, blank=True)
-    anonymous = models.BooleanField(default=True, blank=True, null=True)
-    # comment_writer =  models.ForeignKey('login.User', on_delete=models.CASCADE, related_name='comments', default="익명", blank=True, null=True)     #답변 작성자
-    # User로 불러와야함 onetoone or ForeignKey?
-    def __str__(self):
-        return self.ancomment
-

@@ -1,12 +1,7 @@
 from rest_framework.serializers import ModelSerializer, ReadOnlyField
 from rest_framework.permissions import AllowAny
-from .models import Question, Comment, AnonymousComment
+from .models import Question, Comment
 from login.models import User
-
-class AnonymousCommentSerializer(ModelSerializer):
-    class Meta:
-        model = AnonymousComment
-        fields = []
 
 class CommentSerializer(ModelSerializer):
     writer = ReadOnlyField(source = 'login.User')

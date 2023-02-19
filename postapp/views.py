@@ -43,7 +43,8 @@ class CommentViewSet(ModelViewSet):
             return CommentSerializer
         if self.action == 'create':
             if writer.is_anonymous:      #비로그인 유저인것까지는 판별0 -> AnonymousUser인것을 User로 바꾸던지 writer를 Anonymous로 바꿔야함..
-                print('익명 작성하게 해주세요..')
+                print(writer)
+                # writer = NULL
                 # isinstance(self.request.user, User)
             # print(User.point)
             # User.point += 50
@@ -51,7 +52,11 @@ class CommentViewSet(ModelViewSet):
         return CommentCreateSerializer
 
     def perform_create(self, serializer):
-        serializer.save(writer = self.request.user)
+        if self.request.user.id == None:
+            # handles anonymous users
+            serializer.save(writer=self.request.user.id)
+        else:
+            serializer.save(writer=self.request.user)
 
     def get_queryset(self, **kwargs): # Override
         question_id = self.kwargs['question_id']
