@@ -9,13 +9,13 @@ class UserSerializer(serializers.ModelSerializer): # 유저 생성
             email = validated_data['email'],
             name = validated_data['name'],
             password = validated_data['password'],
-            nickname = validated_data['nickname']
+            # nickname = validated_data['nickname']
         )
         token = Token.objects.create(user=user)
         return user
     class Meta:
         model = User
-        fields = ['email', 'name', 'nickname', 'password']
+        fields = ['email', 'name', 'password']# 'nickname', 
 
 class ProfileSerializer(serializers.ModelSerializer): # 전체 유저 정보 조회
     class Meta:
@@ -25,9 +25,7 @@ class ProfileSerializer(serializers.ModelSerializer): # 전체 유저 정보 조
 class LoginSerializer(serializers.Serializer):  # 회원가입한 유저 로그인 
     email = serializers.EmailField(required=True)
     password = serializers.CharField(required=True, write_only=True)
-    # class Meta:
-    #         model = User
-    #         fields = ['email', 'password']
+
     def validate(self, data):
         user = authenticate(**data)
         if user:

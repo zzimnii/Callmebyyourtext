@@ -3,17 +3,17 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 class UserManager(BaseUserManager):
     # 일반 user 생성
-    def create_user(self, email, name, nickname, password=None):
+    def create_user(self, email, name, password=None):#  nickname, 
         if not email:
             raise ValueError('must have user email')
         if not name:
             raise ValueError('must have user name')
-        if not nickname:
-            raise ValueError('must have nickname')
+        # if not nickname:
+        #     raise ValueError('must have nickname')
         user = self.model(
             email = self.normalize_email(email),
             name = name,
-            nickname = nickname,
+            # nickname = nickname,
         )
         user.set_password(password)
         user.save(using=self._db)
@@ -33,7 +33,7 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser):
     id = models.AutoField(primary_key=True)
     email = models.EmailField(default='', max_length=100, null=False, blank=False, unique=True)
-    nickname = models.CharField(default='', max_length=100, null=False, blank=False, unique=False)
+    # nickname = models.CharField(default='', max_length=100, null=False, blank=False, unique=False)
     name = models.CharField(default='', max_length=100, null=False, blank=False, unique=False)
     point = models.IntegerField(default=500)
 
