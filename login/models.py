@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 class UserManager(BaseUserManager):
     # 일반 user 생성
-    def create_user(self, email, name, password=None):#  nickname, 
+    def create_user(self, email, name, password1=None):#  nickname, 
         if not email:
             raise ValueError('must have user email')
         if not name:
@@ -15,7 +15,7 @@ class UserManager(BaseUserManager):
             name = name,
             # nickname = nickname,
         )
-        user.set_password(password)
+        user.set_password(password1)
         user.save(using=self._db)
         return user
 

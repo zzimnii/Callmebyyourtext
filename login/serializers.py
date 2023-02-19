@@ -14,7 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
         required=True,
         validators=[UniqueValidator(queryset=User.objects.all())],
     )
-    password = serializers.CharField(
+    password1 = serializers.CharField(
         write_only=True,
         required=True,
         validators=[validate_password],
@@ -22,12 +22,12 @@ class UserSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(write_only=True, required=True)
     class Meta:
         model = User
-        fields = ("email", "name", "password", "password2")
+        fields = ("email", "name", "password1", "password2")
     
     def validate(self, data):
-        if data['password']!= data['password2']:
+        if data['password1']!= data['password2']:
             raise serializers.ValidationError(
-                {"password": "Passwords don't match."})
+                {"password1": "Passwords don't match."})
         
         return data
     
@@ -36,7 +36,7 @@ class UserSerializer(serializers.ModelSerializer):
             name=validated_data['name'],
             email=validated_data['email'],
         )
-        user.set_password(validated_data['password'])
+        user.set_password(validated_data['password1'])
         user.save()
         token = Token.objects.create(user=user)
         return user
