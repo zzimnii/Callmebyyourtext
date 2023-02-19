@@ -12,7 +12,7 @@ comment_router.register('comments', CommentViewSet, basename='comment')
 
 urlpatterns = [
     path('', include(question_router.urls)),                #질문 post
-    path('questions/<int:pk>/', include(comment_router.urls)),  #질문 수정/삭제
-    path('comments/<int:pk>/',include(comment_router.urls)),    #질문에 답변 작성
+    path('questions/<int:question_id>/', include(comment_router.urls)),  #질문 수정/삭제
+    path('comments/<int:comment_id>/',include(comment_router.urls)),    #질문에 답변 작성
     #path('/<int:comment_id>/',include(comment_router.urls))
  ]

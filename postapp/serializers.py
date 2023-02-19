@@ -1,24 +1,31 @@
 from rest_framework.serializers import ModelSerializer, ReadOnlyField
+from rest_framework.permissions import AllowAny
 from .models import Question, Comment
 from login.models import User
 
 class CommentSerializer(ModelSerializer):
-    # comment_writer = ReadOnlyField(source='User.username')
-    # user = serializers.ReadOnlyField(source = 'user.nickname')
+    writer = ReadOnlyField(source = 'login.User')
     class Meta:
         model = Comment
-        fields = ['id', 'comment', 'comment_writer', 'question']
+        fields = ['id','comment', 'question', 'writer', 'anonymous']
+        
+class CommentCreateSerializer(ModelSerializer):
+    permission_classes = [AllowAny]
+    class Meta:
+        model = Comment
+        fields = ['id', 'question', 'comment', 'anonymous']
+
 
 class QuestionSerializer(ModelSerializer):
-    # question_writer = ReadOnlyField(source='Profile.user.username')
+    writer = ReadOnlyField(source = 'login.User')
     class Meta:
         model = Question
-        fields = ['id', 'question', 'question_writer']
+        fields = ['id', 'question', 'writer']
 
 class QuestionDetailSerializer(ModelSerializer):
-    # question_writer = ReadOnlyField(source='User.username')
+    writer = ReadOnlyField(source = 'login.User')
     comments = CommentSerializer(many=True, read_only=True)
 
     class Meta:
         model = Question
-        fields = ['id', 'question', 'question_writer', 'comments']
+        fields = ['id', 'question', 'writer', 'comments']
