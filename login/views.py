@@ -9,7 +9,7 @@ class UserCreate(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-class ProfileList(generics.ListAPIView):
+class ProfileList(generics.RetrieveUpdateAPIView):
     queryset = User.objects.all()
     serializer_class = ProfileSerializer
 
