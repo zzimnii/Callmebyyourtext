@@ -1,6 +1,6 @@
 from .models import Question, Comment
 from login.models import User
-# from django.contrib.auth.models import User, AbstractUser
+from login.serializers import UserSerializer
 from .serializers import QuestionSerializer, QuestionDetailSerializer, CommentSerializer, CommentCreateSerializer
 from rest_framework.viewsets import ModelViewSet
 
@@ -31,8 +31,7 @@ class QuestionViewSet(ModelViewSet):
 
 class CommentViewSet(ModelViewSet):
     queryset = Comment.objects.all()
-    #authentication_classes = [BasicAuthentication, SessionAuthentication]
-    permission_classes = [IsOwnerOrReadOnly]    #비로그인 유저도 작성창은 나옴
+    permission_classes = [IsOwnerOrReadOnly]
 
     def get_serializer_class(self):
         writer = self.request.user
@@ -42,21 +41,26 @@ class CommentViewSet(ModelViewSet):
             # print(User.point)
             return CommentSerializer
         if self.action == 'create':
-            if writer.is_anonymous:      #비로그인 유저인것까지는 판별0 -> AnonymousUser인것을 User로 바꾸던지 writer를 Anonymous로 바꿔야함..
-                print(writer)
-                # writer = NULL
-                # isinstance(self.request.user, User)
-            # print(User.point)
-            # User.point += 50
             return CommentCreateSerializer
         return CommentCreateSerializer
 
     def perform_create(self, serializer):
+        #print(self.request.user)   -> userId가 나옴
+        #로그인된 유저를 특정 -> 그 유저의 point에 추가해야댐
+        print("포인트 50 추가해줘..")
         if self.request.user.id == None:
-            # handles anonymous users
             serializer.save(writer=self.request.user.id)
         else:
+            loginUser = self.request.user
+            # loginUser.point += 50    #프린트는 되는데 DB에 저장X ... 왜????
+            print(loginUser)
+            loginUser.point += 50
+            point = loginUser.point
+            print(point)
             serializer.save(writer=self.request.user)
+            if UserSerializer.is_valid():
+                UserSerializer.save(point)
+        
 
     def get_queryset(self, **kwargs): # Override
         question_id = self.kwargs['question_id']
