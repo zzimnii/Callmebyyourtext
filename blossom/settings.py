@@ -131,6 +131,7 @@ REST_FRAMEWORK = {
     }
 # 여기있는 REST_FRAMEWORK 지우면 오류남.. 지우면 안돼!
 
+
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
