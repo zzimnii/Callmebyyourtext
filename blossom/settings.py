@@ -30,11 +30,34 @@ INSTALLED_APPS = [
 
     'login',
     'postapp',
+    
     'rest_framework',
     'rest_framework.authtoken',
+    'corsheaders',
+
 ]
 
+REST_FRAMEWORK = {
+	'DEFAULT_AUTHENTICATION_CLASSED':
+    ['rest_framework.authentication.TokenAuthentication', ],
+    'DEFAULT_PERMISSION_CLASSES': [
+   'rest_framework.permissions.AllowAny',],
+
+    'DEFAULT_RENDERER_CLASSES': (
+    'djangorestframework_camel_case.render.CamelCaseJSONRenderer', 
+    'djangorestframework_camel_case.render.CamelCaseBrowsableAPIRenderer',
+    ),
+
+    'DEFAULT_PARSER_CLASSES': (
+    'djangorestframework_camel_case.parser.CamelCaseFormParser', 
+    'djangorestframework_camel_case.parser.CamelCaseMultiPartParser',
+    'djangorestframework_camel_case.parser.CamelCaseJSONParser',
+    ),
+}
+
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware', 
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -44,6 +67,15 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
 ROOT_URLCONF = 'blossom.urls'
 
 TEMPLATES = [
