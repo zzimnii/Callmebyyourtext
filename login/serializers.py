@@ -41,20 +41,6 @@ class UserSerializer(serializers.ModelSerializer):
         token = Token.objects.create(user=user)
         return user
     
-# class UserSerializer(serializers.ModelSerializer): # 유저 생성 
-#     def create(self, validated_data):
-#         user = User.objects.create_user(
-#             email = validated_data['email'],
-#             name = validated_data['name'],
-#             password = validated_data['password'],
-#             # nickname = validated_data['nickname']
-#         )
-#         token = Token.objects.create(user=user)
-#         return user
-#     class Meta:
-#         model = User
-#         fields = ['email', 'name', 'password', 'password2']# 'nickname', 
-
 class ProfileSerializer(serializers.ModelSerializer): # 전체 유저 정보 조회
     class Meta:
         model = User

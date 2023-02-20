@@ -3,6 +3,8 @@ from .serializers import UserSerializer, ProfileSerializer, LoginSerializer
 from .models import User
 from rest_framework import generics, status
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
 
 # 회원가입
 class UserCreate(generics.CreateAPIView):
@@ -10,6 +12,9 @@ class UserCreate(generics.CreateAPIView):
     serializer_class = UserSerializer
 
 class ProfileList(generics.RetrieveUpdateAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    
     queryset = User.objects.all()
     serializer_class = ProfileSerializer
 
