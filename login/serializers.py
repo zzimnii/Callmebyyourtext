@@ -50,9 +50,6 @@ class LoginSerializer(serializers.Serializer):  # 회원가입한 유저 로그�
     email = serializers.EmailField(required=True)
     password = serializers.CharField(required=True, write_only=True)
 
-    # class Meta:
-    #     model = User
-    #     fields = '__all__'
     def validate(self, data):
         user = authenticate(**data)
         if user:
