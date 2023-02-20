@@ -57,3 +57,12 @@ class LoginSerializer(serializers.Serializer):  # 회원가입한 유저 로그�
             return token
         raise serializers.ValidationError(
             {"error":"Unable to log in with provided credentials."})
+
+class PointSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['point']
+    def update(self, instance, validated_data):
+        instance.point = validated_data.get('point', instance.point)
+        instance.save()
+        return instance  
