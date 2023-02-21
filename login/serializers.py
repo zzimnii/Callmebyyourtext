@@ -44,7 +44,7 @@ class UserSerializer(serializers.ModelSerializer):
 class ProfileSerializer(serializers.ModelSerializer): # 전체 유저 정보 조회
     class Meta:
         model = User
-        fields = ['email', 'name']
+        fields = ['email', 'name', 'point']
 
 class LoginSerializer(serializers.Serializer):  # 회원가입한 유저 로그인 
     email = serializers.EmailField(required=True)

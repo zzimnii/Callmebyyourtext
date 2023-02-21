@@ -35,7 +35,7 @@ class User(AbstractBaseUser):
     email = models.EmailField(default='', max_length=100, null=False, blank=False, unique=True)
     # nickname = models.CharField(default='', max_length=100, null=False, blank=False, unique=False)
     name = models.CharField(default='', max_length=100, null=False, blank=False, unique=False)
-    point = models.IntegerField(default=500)
+    point = models.PositiveIntegerField(default=500)
 
     # User 모델의 필수 field
     is_active = models.BooleanField(default=True)    
