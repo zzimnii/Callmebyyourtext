@@ -1,6 +1,6 @@
 from .models import Question, Comment
 from login.models import User
-from login.serializers import UserSerializer
+from login.serializers import PointSerializer
 from .serializers import QuestionSerializer, QuestionDetailSerializer, CommentSerializer, CommentCreateSerializer
 from rest_framework.viewsets import ModelViewSet
 
@@ -47,19 +47,15 @@ class CommentViewSet(ModelViewSet):
     def perform_create(self, serializer):
         #print(self.request.user)   -> userId가 나옴
         #로그인된 유저를 특정 -> 그 유저의 point에 추가해야댐
-        print("포인트 50 추가해줘..")
         if self.request.user.id == None:
             serializer.save(writer=self.request.user.id)
         else:
             loginUser = self.request.user
-            # loginUser.point += 50    #프린트는 되는데 DB에 저장X ... 왜????
-            print(loginUser)
-            loginUser.point += 50
-            point = loginUser.point
-            print(point)
             serializer.save(writer=self.request.user)
-            if UserSerializer.is_valid():
-                UserSerializer.save(point)
+            loginUser.point += 50
+            update_serial=PointSerializer(loginUser, data=self.request.data, partial=True)
+            if update_serial.is_valid():
+                update_serial.save()
         
 
     def get_queryset(self, **kwargs): # Override
