@@ -32,8 +32,9 @@ class UserSerializer(serializers.ModelSerializer):
         return data
     
     def create(self, validated_data):
+        x = datetime.now()
         user = User.objects.create_user(
-            id = str(datetime.now()),
+            id = str(x.year)+str(x.month)+str(x.day)+str(x.hour)+str(x.minute)+str(x.second)+str(x.microsecond),
             name=validated_data['name'],
             email=validated_data['email'],
         )
