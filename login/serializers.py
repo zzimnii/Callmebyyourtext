@@ -4,7 +4,7 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from rest_framework.validators import UniqueValidator
-
+from datetime import datetime
 
 class UserSerializer(serializers.ModelSerializer):
     name = serializers.CharField(
@@ -33,6 +33,7 @@ class UserSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         user = User.objects.create_user(
+            id = str(datetime.now()),
             name=validated_data['name'],
             email=validated_data['email'],
         )
