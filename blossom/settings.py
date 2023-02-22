@@ -38,21 +38,23 @@ INSTALLED_APPS = [
 ]
 
 REST_FRAMEWORK = {
-	'DEFAULT_AUTHENTICATION_CLASSED':
-    ['rest_framework.authentication.TokenAuthentication', ],
+	'DEFAULT_AUTHENTICATION_CLASSES': [
+    'rest_framework.authentication.SessionAuthentication',
+    'rest_framework.authentication.TokenAuthentication', 
+    ],
     'DEFAULT_PERMISSION_CLASSES': [
    'rest_framework.permissions.AllowAny',],
 
-    'DEFAULT_RENDERER_CLASSES': (
+    'DEFAULT_RENDERER_CLASSES': [
     'djangorestframework_camel_case.render.CamelCaseJSONRenderer', 
     'djangorestframework_camel_case.render.CamelCaseBrowsableAPIRenderer',
-    ),
+    ],
 
-    'DEFAULT_PARSER_CLASSES': (
+    'DEFAULT_PARSER_CLASSES': [
     'djangorestframework_camel_case.parser.CamelCaseFormParser', 
     'djangorestframework_camel_case.parser.CamelCaseMultiPartParser',
     'djangorestframework_camel_case.parser.CamelCaseJSONParser',
-    ),
+    ],
 }
 
 MIDDLEWARE = [
@@ -125,11 +127,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-REST_FRAMEWORK = {
-	'DEFAULT_AUTHENTICATION_CLASSES':
-    ['rest_framework.authentication.TokenAuthentication', ],
-    }
-# 여기있는 REST_FRAMEWORK 지우면 오류남.. 지우면 안돼!
 
 
 # Internationalization
