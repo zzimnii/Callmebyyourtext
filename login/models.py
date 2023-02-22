@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from rest_framework.authtoken.models import Token
 
 class UserManager(BaseUserManager):
     # 일반 user 생성
@@ -21,12 +22,14 @@ class UserManager(BaseUserManager):
         return user
 
     # 관리자 user 생성
-    def create_superuser(self, email, name, password=None):
+    def create_superuser(self,id, email, name, password=None):
         user = self.create_user(
             email = email,
             password = password,
-            name = name
+            name = name,
+            id = id
         )
+        token = Token.objects.create(user=user)
         user.is_admin = True
         user.save(using=self._db)
         return user
@@ -64,7 +67,7 @@ class User(AbstractBaseUser):
     # 사용자의 username field는 nickname으로 설정
     USERNAME_FIELD = 'email'
     # 필수로 작성해야하는 field
-    REQUIRED_FIELDS = ['name']
+    REQUIRED_FIELDS = ['id', 'name']
 
     def __str__(self):
         return self.name
