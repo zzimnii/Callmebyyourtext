@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly 
                                # all methods need Authenticate  # => GET method 허용시 사용
 from rest_framework.authentication import TokenAuthentication
+from django.contrib.auth import login, logout
 
 # 회원가입
 class UserCreate(generics.CreateAPIView):
@@ -22,10 +23,16 @@ class ProfileList(generics.RetrieveUpdateAPIView):
 class LoginView(generics.GenericAPIView):
     serializer_class = LoginSerializer
 
-    def post(self, request):
+    def post(self, request): 
+        user = User.objects.get(email=request.data['email'])
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         token = serializer.validated_data
+        login(request, user)
         return Response({
+            'id': user.id,
+            'email': user.email,
+            'name': user.name,
             'token': token.key,},
             status=status.HTTP_200_OK)
+    
