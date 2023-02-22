@@ -25,7 +25,6 @@ class QuestionViewSet(ModelViewSet):
             return QuestionDetailSerializer
         
         return QuestionSerializer
-
     def perform_create(self, serializer, **kwargs):
         serializer.save(writer = self.request.user)
 
@@ -38,7 +37,16 @@ class CommentViewSet(ModelViewSet):
         if self.action == 'list':
             return CommentSerializer
         if self.action == 'retrieve':
-            # print(User.point)
+            # 특정 답변으로 이동
+            # 테스트 해봐야함
+            if self.request.user.id != None:        #로그인 했을때.
+                loginUser = self.request.user
+                print(loginUser.name)
+                loginUser.point -= 50
+                print(loginUser.point)
+                update_serial=PointSerializer(loginUser, data=self.request.data, partial=True)
+                if update_serial.is_valid():
+                    update_serial.save()
             return CommentSerializer
         if self.action == 'create':
             return CommentCreateSerializer
