@@ -13,7 +13,8 @@ from django.views.decorators.csrf import csrf_exempt
 class QuestionViewSet(ModelViewSet):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
-    authentication_classes = [BasicAuthentication, SessionAuthentication]
+    # authentication_classes = [BasicAuthentication, SessionAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
     def get_serializer_class(self):
