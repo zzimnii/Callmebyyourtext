@@ -17,5 +17,5 @@ urlpatterns = [
     path('', include(question_router.urls)),                #질문 post
     path('questions/<int:question_id>/', include(comment_router.urls)),  #질문 수정/삭제
     path('comments/<int:comment_id>/',include(comment_router.urls)),    #질문에 답변 작성
-    path('<int:writer>/', include(questionList_router.urls)),
+    path('<int:writer>/', include(questionList_router.urls)),           #user별 질문리스트
  ]

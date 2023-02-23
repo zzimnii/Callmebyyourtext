@@ -27,17 +27,11 @@ class QuestionViewSet(ModelViewSet):
         
         return QuestionSerializer
 
-    #이거는 로그인된 본인 질문만 볼 수 있음.
-    #def get_queryset(self):
-    #    return Question.objects.filter(writer=self.request.user)
-
-    #http://127.0.0.1:8000/2023223204042952955/questions    -> writer아이디 값에 따른 질문
-    #def get_queryset(self, **kwargs): # Override
-    #    writer = self.kwargs['writer']
-    #    return self.queryset.filter(writer=writer)
-
     def perform_create(self, serializer, **kwargs):
         if self.request.user.id == None:
+            print(self.request.user.id)
+            print('로그인 안한거')
+            #self.request.user.id=None으로 나옴
             serializer.save(writer=self.request.user.id)
         else:
             serializer.save(writer = self.request.user)
@@ -46,8 +40,14 @@ class QuestionViewSet(ModelViewSet):
 class QuestionListSet(ModelViewSet):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
+
     def get_queryset(self, **kwargs): # Override
         writer = self.kwargs['writer']
+        if writer==0:
+            writer=None
+            return self.queryset.filter(writer=None)
+        else:
+            print('영 아님')
         return self.queryset.filter(writer=writer)
 
 
@@ -60,8 +60,6 @@ class CommentViewSet(ModelViewSet):
         if self.action == 'list':
             return CommentSerializer
         if self.action == 'retrieve':
-            # 특정 답변으로 이동
-            # 테스트 해봐야함
             if self.request.user.id != None:        #로그인 했을때.
                 loginUser = self.request.user
                 print(loginUser.name)
@@ -76,8 +74,6 @@ class CommentViewSet(ModelViewSet):
         return CommentCreateSerializer
 
     def perform_create(self, serializer):
-        #print(self.request.user)   -> userId가 나옴
-        #로그인된 유저를 특정 -> 그 유저의 point에 추가해야댐
         if self.request.user.id == None:
             serializer.save(writer=self.request.user.id)
         else:
