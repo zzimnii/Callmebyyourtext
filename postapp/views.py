@@ -13,9 +13,9 @@ from django.views.decorators.csrf import csrf_exempt
 class QuestionViewSet(ModelViewSet):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
-    # authentication_classes = [BasicAuthentication, SessionAuthentication]
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    #authentication_classes = [BasicAuthentication, SessionAuthentication]
+    #authentication_classes = [TokenAuthentication]
+    #permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
     def get_serializer_class(self):
         if self.action == "create":
@@ -26,8 +26,30 @@ class QuestionViewSet(ModelViewSet):
             return QuestionDetailSerializer
         
         return QuestionSerializer
+
+    #이거는 로그인된 본인 질문만 볼 수 있음.
+    #def get_queryset(self):
+    #    return Question.objects.filter(writer=self.request.user)
+
+    #http://127.0.0.1:8000/2023223204042952955/questions    -> writer아이디 값에 따른 질문
+    #def get_queryset(self, **kwargs): # Override
+    #    writer = self.kwargs['writer']
+    #    return self.queryset.filter(writer=writer)
+
     def perform_create(self, serializer, **kwargs):
-        serializer.save(writer = self.request.user)
+        if self.request.user.id == None:
+            serializer.save(writer=self.request.user.id)
+        else:
+            serializer.save(writer = self.request.user)
+
+
+class QuestionListSet(ModelViewSet):
+    queryset = Question.objects.all()
+    serializer_class = QuestionSerializer
+    def get_queryset(self, **kwargs): # Override
+        writer = self.kwargs['writer']
+        return self.queryset.filter(writer=writer)
+
 
 class CommentViewSet(ModelViewSet):
     queryset = Comment.objects.all()
@@ -70,3 +92,5 @@ class CommentViewSet(ModelViewSet):
     def get_queryset(self, **kwargs): # Override
         question_id = self.kwargs['question_id']
         return self.queryset.filter(question=question_id)
+
+
