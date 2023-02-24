@@ -13,7 +13,7 @@ class Question(models.Model):
 
 
 class Comment(models.Model):
-    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="comments")     #질문 ID
+    questionId = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="comments")     #질문 ID
     comment = models.TextField()
     writer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments', null = True, blank=True)
     anonymous = models.BooleanField(default=True, blank=True, null=True)

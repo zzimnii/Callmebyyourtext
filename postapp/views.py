@@ -49,8 +49,6 @@ class CommentViewSet(ModelViewSet):
         if self.action == 'list':
             return CommentSerializer
         if self.action == 'retrieve':
-            # 특정 답변으로 이동
-            # 테스트 해봐야함
             if self.request.user.id != None:        #로그인 했을때.
                 loginUser = self.request.user
                 print(loginUser.name)
@@ -80,4 +78,4 @@ class CommentViewSet(ModelViewSet):
 
     def get_queryset(self, **kwargs): # Override
         question_id = self.kwargs['question_id']
-        return self.queryset.filter(question=question_id)
+        return self.queryset.filter(questionId=question_id)

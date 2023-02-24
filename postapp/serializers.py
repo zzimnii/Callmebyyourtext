@@ -9,7 +9,7 @@ class CommentSerializer(ModelSerializer):
     writer = serializers.ReadOnlyField(source = 'writer.name')
     class Meta:
         model = Comment
-        fields = ['id','comment', 'question', 'writer', 'anonymous', 'created_at']
+        fields = ['id','comment', 'questionId', 'writer', 'anonymous', 'created_at']
 
 class OpenCommentSerializer(ModelSerializer):
     class Meta:
@@ -20,7 +20,7 @@ class CommentCreateSerializer(ModelSerializer):
     permission_classes = [AllowAny]
     class Meta:
         model = Comment
-        fields = ['id', 'question', 'comment', 'anonymous', 'created_at']
+        fields = ['id', 'questionId', 'comment', 'anonymous', 'created_at']
 
     def create(self, validated_data):
         x = datetime.now()
@@ -29,7 +29,7 @@ class CommentCreateSerializer(ModelSerializer):
             comment=validated_data['comment'],
             writer=validated_data['writer'],
             anonymous=validated_data['anonymous'],
-            question=validated_data['question']
+            questionId=validated_data['questionId']
             )
 
 
@@ -48,7 +48,6 @@ class QuestionSerializer(ModelSerializer):
             )
 
 class QuestionDetailSerializer(ModelSerializer):
-    print(datetime)
     comments = CommentSerializer(many=True, read_only=True)
     writer = serializers.ReadOnlyField(source = 'writer.name')
     class Meta:
