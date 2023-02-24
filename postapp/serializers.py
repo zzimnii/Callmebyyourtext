@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer, ReadOnlyField
-from rest_framework.permissions import AllowAny
-from .models import Question, Comment
+from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
+from .models import Question, Comment, OpenComment
 from django.conf import settings
 from datetime import datetime
 
@@ -9,14 +9,18 @@ class CommentSerializer(ModelSerializer):
     writer = serializers.ReadOnlyField(source = 'writer.name')
     class Meta:
         model = Comment
-        fields = ['id','comment', 'question', 'writer', 'anonymous']
+        fields = ['id','comment', 'question', 'writer', 'anonymous', 'created_at']
 
-        
+class OpenCommentSerializer(ModelSerializer):
+    class Meta:
+        model = OpenComment
+        fields = ['comment', 'reader']
+
 class CommentCreateSerializer(ModelSerializer):
     permission_classes = [AllowAny]
     class Meta:
         model = Comment
-        fields = ['id', 'question', 'comment', 'anonymous']
+        fields = ['id', 'question', 'comment', 'anonymous', 'created_at']
 
     def create(self, validated_data):
         x = datetime.now()
@@ -33,7 +37,7 @@ class QuestionSerializer(ModelSerializer):
     writer = serializers.ReadOnlyField(source = 'writer.name')
     class Meta:
         model = Question
-        fields = ['id', 'question', 'writer']
+        fields = ['id', 'question', 'writer', 'created_at']
 
     def create(self, validated_data):
         x = datetime.now()
@@ -44,8 +48,9 @@ class QuestionSerializer(ModelSerializer):
             )
 
 class QuestionDetailSerializer(ModelSerializer):
+    print(datetime)
     comments = CommentSerializer(many=True, read_only=True)
     writer = serializers.ReadOnlyField(source = 'writer.name')
     class Meta:
         model = Question
-        fields = ['id', 'question', 'writer', 'comments']
+        fields = ['id', 'question', 'writer', 'comments', 'created_at']
