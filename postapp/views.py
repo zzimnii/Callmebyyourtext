@@ -38,6 +38,10 @@ class QuestionListSet(ModelViewSet):
     def get_queryset(self, **kwargs): # Override
         writer = self.kwargs['writer']
         return self.queryset.filter(writer=writer)
+    def get_serializer_class(self):
+        if self.action == "create":
+            return CommentCreateSerializer
+        
 
 
 class CommentViewSet(ModelViewSet):

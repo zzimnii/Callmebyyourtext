@@ -19,7 +19,9 @@ class CommentCreateSerializer(ModelSerializer):
         fields = ['id', 'questionId', 'comment', 'anonymous', 'created_at']
 
     def create(self, validated_data):
+        x = datetime.now()
         return Comment.objects.create(
+            id = str(x.year)+str(x.month)+str(x.day)+str(x.hour)+str(x.minute)+str(x.second)+str(x.microsecond),
             comment=validated_data['comment'],
             writer=validated_data['writer'],
             anonymous=validated_data['anonymous'],
@@ -34,7 +36,9 @@ class QuestionSerializer(ModelSerializer):
         fields = ['id', 'question', 'writer', 'created_at']
 
     def create(self, validated_data):
+        x = datetime.now()
         return Question.objects.create(
+            id = str(x.year)+str(x.month)+str(x.day)+str(x.hour)+str(x.minute)+str(x.second)+str(x.microsecond),
             writer=validated_data['writer'],
             question=validated_data['question']
             )
