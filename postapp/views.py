@@ -74,11 +74,11 @@ class CommentViewSet(ModelViewSet):
         
     def retrieve(self, request, pk=None, **kwargs):
         question_id = self.kwargs['question_id']
-        print(pk)
+        question = get_object_or_404(Question, id=question_id)
+        print(question.writer.id)   #질문 작성자 ID
         if self.request.user.id != None:             #로그인 했을때
             comment = Comment.objects.all()
             comment = get_object_or_404(Comment, pk=pk)
-            print(comment)
             if comment.open_user.filter(id=request.user.id).exists():
                 print('이미 열어본 답변')
                 serializer=CommentSerializer(comment)
@@ -87,9 +87,11 @@ class CommentViewSet(ModelViewSet):
                 print('처음 열어보는 답변')
                 comment.open_user.add(request.user)
                 loginUser = request.user
-                print(loginUser.name)
-                loginUser.point -= 50
-                print(loginUser.point)
+                if loginUser.id == question.writer.id:
+                    loginUser.point -= 50
+                else:
+                    print('-100')
+                    loginUser.point -= 100
                 update_serial=PointSerializer(loginUser, data=request.data, partial=True)
                 if update_serial.is_valid():
                     update_serial.save()
