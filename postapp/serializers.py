@@ -2,14 +2,20 @@ from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer, ReadOnlyField
 from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
 from .models import Question, Comment
+from login.models import User
 from django.conf import settings
 from datetime import datetime
 
 class CommentSerializer(ModelSerializer):
+    class UserSerializer(serializers.ModelSerializer):
+        class Meta:
+            model=User
+            fields=['id', 'point']
+    open_user = UserSerializer(read_only=True, many=True)
     writer = serializers.ReadOnlyField(source = 'writer.name')
     class Meta:
         model = Comment
-        fields = ['id','comment', 'questionId', 'writer', 'anonymous', 'created_at']
+        fields = ['id','comment', 'questionId', 'writer', 'anonymous', 'created_at', 'open_user']
 
 
 class CommentCreateSerializer(ModelSerializer):
