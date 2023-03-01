@@ -10,7 +10,8 @@ class CommentSerializer(ModelSerializer):
     class UserSerializer(serializers.ModelSerializer):
         class Meta:
             model=User
-            fields=['id', 'point']
+            fields=['id', 'name', 'point']
+
     open_user = UserSerializer(read_only=True, many=True)
     writer = serializers.ReadOnlyField(source = 'writer.name')
     class Meta:
@@ -33,6 +34,24 @@ class CommentCreateSerializer(ModelSerializer):
             anonymous=validated_data['anonymous'],
             questionId=validated_data['questionId']
             )
+
+class CommentLikeSerializer(ModelSerializer):
+    def update(self, instance, validated_data):
+        print(instance)
+        instance.like_count = validated_data.get('like_count', instance.like_count)
+        instance.save()
+        return instance
+    
+    class UserSerializer(serializers.ModelSerializer):
+        class Meta:
+            model=User
+            fields=['id', 'name']
+    
+    like_user = UserSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = Comment
+        fields=['id', 'like_user', 'like_count']  
 
 
 class QuestionSerializer(ModelSerializer):
