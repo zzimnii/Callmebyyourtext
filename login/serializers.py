@@ -47,6 +47,7 @@ class ProfileSerializer(serializers.ModelSerializer): # 전체 유저 정보 조
     class Meta:
         model = User
         fields = ['email', 'name', 'point']
+        read_only_fields = ['point'] # 포인트는 수정 불가!
 
 class LoginSerializer(serializers.Serializer):  # 회원가입한 유저 로그인 
     email = serializers.EmailField(required=True)
