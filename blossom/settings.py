@@ -54,8 +54,9 @@ REST_FRAMEWORK = {
 }
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-SESSION_COOKIE_AGE = 1800 # set just 30 minutes
+SESSION_COOKIE_AGE = 300 # second Unit
 SESSION_SAVE_EVERY_REQUEST = True
+SESSION_COOKIE_HTTPONLY = False # js에서 cookie 받아올 수 있도록 하는거라는디...
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware', 
@@ -150,13 +151,13 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ko-kr'
 
 TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False # False로 해야 한국 시간대 사용 가능
 
 
 # Static files (CSS, JavaScript, Images)
