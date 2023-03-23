@@ -12,6 +12,29 @@ class Question(models.Model):
         return self.question
 
 
+#제공하는 질문들
+class RecQuestion(models.Model):
+    #질문 내용
+    q = models.TextField()
+    #질문 id 자동 생성
+    #used??이거 뭐지
+    used = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.q
+    
+
+#제 3자가 보낸 질문
+class BeQuestion(models.Model):
+    q = models.TextField()
+    ownerId = models.ForeignKey(User, on_delete=models.CASCADE, related_name='beQuestion', null = True)
+    accept = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+
+    def __str__(self):
+        return self.q
+    
+
 class Comment(models.Model):
     questionId = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="comments")     #질문 ID
     comment = models.TextField()
@@ -20,6 +43,19 @@ class Comment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     open_user = models.ManyToManyField(User, related_name='open_users')
     like_user = models.ManyToManyField(User, related_name='like_users')
+    like_count = models.PositiveIntegerField(default=0, null=True)
+
+    def __str__(self):
+        return self.comment
+    
+class BeComment(models.Model):
+    questionId = models.ForeignKey(BeQuestion, on_delete=models.CASCADE, related_name="beComments")     #질문 ID
+    comment = models.TextField()
+    writer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='beComments', null = True, blank=True)
+    anonymous = models.BooleanField(default=True, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    open_user = models.ManyToManyField(User, related_name='beOpen_users')
+    like_user = models.ManyToManyField(User, related_name='beLike_users')
     like_count = models.PositiveIntegerField(default=0, null=True)
 
     def __str__(self):
