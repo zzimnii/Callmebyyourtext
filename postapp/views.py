@@ -16,7 +16,7 @@ class QuestionViewSet(ModelViewSet):
     queryset = Question.objects.all().order_by('-created_at')
     serializer_class = QuestionSerializer
     #authentication_classes = [BasicAuthentication, SessionAuthentication]
-    # authentication_classes = [TokenAuthentication]
+    authentication_classes = [TokenAuthentication]
     #permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
     def get_serializer_class(self):
@@ -54,6 +54,7 @@ class RecQuestionViewSet(ModelViewSet):
 class BeQuestionViewSet(ModelViewSet):
     queryset = BeQuestion.objects.all()
     serializer_class = BeQuestionSerializer
+    authentication_classes = [TokenAuthentication]
     #authentication_classes = [BasicAuthentication, SessionAuthentication]
     #permission_classes = [IsOwnerBeOrReadOnly]
     
@@ -83,7 +84,7 @@ class BeQuestionListSet(ModelViewSet):
     queryset = BeQuestion.objects.all().order_by('-created_at')
     serializer_class = BeQuestionDetailSerializer
     # authentication_classes = [BasicAuthentication, SessionAuthentication]
-    # authentication_classes = [TokenAuthentication]
+    authentication_classes = [TokenAuthentication]
 
     def get_queryset(self, **kwargs): # Override
         ownerId = self.kwargs['ownerId']
@@ -158,6 +159,7 @@ class CommentViewSet(ModelViewSet):
 #답변 추천
 class CommentLikeViewSet(ModelViewSet):
     #authentication_classes = [BasicAuthentication, SessionAuthentication]          # 로그인 한 사람만 누를 수 있음
+    authentication_classes = [TokenAuthentication]
     queryset = Comment.objects.all()    
     serializer_class = CommentLikeSerializer
 
@@ -264,6 +266,7 @@ class BeCommentViewSet(ModelViewSet):
 #답변 추천 로직
 class BeCommentLikeViewSet(ModelViewSet):
     #authentication_classes = [BasicAuthentication, SessionAuthentication]          # 로그인 한 사람만 누를 수 있음
+    authentication_classes = [TokenAuthentication]
     queryset = BeComment.objects.all()    
     serializer_class = BeCommentLikeSerializer
 
