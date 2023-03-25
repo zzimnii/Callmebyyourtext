@@ -5,7 +5,6 @@ from .models import Question, Comment, RecQuestion, BeQuestion, BeComment
 from login.models import User
 from django.conf import settings
 from datetime import datetime
-import math
 
 class CommentSerializer(ModelSerializer):
     class UserSerializer(serializers.ModelSerializer):
@@ -28,6 +27,7 @@ class CommentCreateSerializer(ModelSerializer):
     def create(self, validated_data):
         x = datetime.now()
         return Comment.objects.create(
+            id = x,
             comment=validated_data['comment'],
             writer=validated_data['writer'],
             anonymous=validated_data['anonymous'],
@@ -75,6 +75,7 @@ class BeCommentCreateSerializer(ModelSerializer):
     def create(self, validated_data):
         x = datetime.now()
         return BeComment.objects.create(
+            id = x,
             comment=validated_data['comment'],
             writer=validated_data['writer'],
             anonymous=validated_data['anonymous'],
@@ -107,11 +108,14 @@ class QuestionSerializer(ModelSerializer):
 
     def create(self, validated_data):
         x = datetime.now()
+        x = x.strftime('%y%m%d%H%M%S%f')
+        print(x)
         return Question.objects.create(
+            id = x,
             writer=validated_data['writer'],
             question=validated_data['question']
             )
-
+        
 class QuestionDetailSerializer(ModelSerializer):
     comments = CommentSerializer(many=True, read_only=True)
     writer = serializers.ReadOnlyField(source = 'writer.name')
@@ -132,6 +136,7 @@ class BeQuestionSerializer(ModelSerializer):
     def create(self, validated_data):
         x = datetime.now()
         return BeQuestion.objects.create(
+            id = x,
             q=validated_data['q'],
             ownerId=validated_data['ownerId']
             )
