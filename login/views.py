@@ -5,7 +5,7 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly 
                                # all methods need Authenticate  # => GET method 허용시 사용
-from rest_framework.authentication import SessionAuthentication
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from django.contrib.auth import login, logout
 from rest_framework.views import APIView
 
@@ -15,6 +15,7 @@ class UserCreate(generics.CreateAPIView):
     serializer_class = UserSerializer
 
 class ProfileList(generics.RetrieveUpdateAPIView):
+    authentication_classes = [TokenAuthentication]
     #authentication_classes = [SessionAuthentication]
     #permission_classes = [IsAuthenticated]
 
