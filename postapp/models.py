@@ -4,6 +4,7 @@ from django.conf import settings
 from django.utils import timezone
 
 class Question(models.Model):
+    id = models.AutoField(primary_key=True)
     question = models.TextField()
     writer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='question', null = True) #질문 작성자
     created_at = models.DateTimeField(auto_now_add=True, null=True)
@@ -26,6 +27,7 @@ class RecQuestion(models.Model):
 
 #제 3자가 보낸 질문
 class BeQuestion(models.Model):
+    id = models.AutoField(primary_key=True)
     q = models.TextField()
     ownerId = models.ForeignKey(User, on_delete=models.CASCADE, related_name='beQuestion', null = True)
     accept = models.BooleanField(default=False)
@@ -36,6 +38,7 @@ class BeQuestion(models.Model):
     
 
 class Comment(models.Model):
+    id = models.AutoField(primary_key=True)
     questionId = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="comments")     #질문 ID
     comment = models.TextField()
     writer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments', null = True, blank=True)
@@ -49,6 +52,7 @@ class Comment(models.Model):
         return self.comment
     
 class BeComment(models.Model):
+    id = models.AutoField(primary_key=True)
     questionId = models.ForeignKey(BeQuestion, on_delete=models.CASCADE, related_name="beComments")     #질문 ID
     comment = models.TextField()
     writer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='beComments', null = True, blank=True)
