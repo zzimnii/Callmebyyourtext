@@ -15,8 +15,8 @@ class UserCreate(generics.CreateAPIView):
     serializer_class = UserSerializer
 
 class ProfileList(generics.RetrieveUpdateAPIView):
-    authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    #authentication_classes = [SessionAuthentication]
+    #permission_classes = [IsAuthenticated]
 
     queryset = User.objects.all()
     serializer_class = ProfileSerializer
