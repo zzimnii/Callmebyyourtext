@@ -9,15 +9,15 @@ from rest_framework import status
 
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
-from .permissions import IsOwnerOrReadOnly
+from .permissions import IsOwnerOrReadOnly, IsOwnerBeOrReadOnly
 
 #질문 CRUD
 class QuestionViewSet(ModelViewSet):
     queryset = Question.objects.all().order_by('-created_at')
     serializer_class = QuestionSerializer
-    authentication_classes = [BasicAuthentication, SessionAuthentication]
+    #authentication_classes = [BasicAuthentication, SessionAuthentication]
     # authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    #permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
     def get_serializer_class(self):
         if self.action == "create":
@@ -48,14 +48,15 @@ class QuestionListSet(ModelViewSet):
 class RecQuestionViewSet(ModelViewSet):
     queryset = RecQuestion.objects.all()
     serializer_class = RecQuestionSerializer
-    authentication_classes = [BasicAuthentication, SessionAuthentication]
+    #authentication_classes = [BasicAuthentication, SessionAuthentication]
 
 #제 3자가 보낸 질문(누구나 질문을 보낼 수 있음)
 class BeQuestionViewSet(ModelViewSet):
     queryset = BeQuestion.objects.all()
     serializer_class = BeQuestionSerializer
-    authentication_classes = [BasicAuthentication, SessionAuthentication]
-
+    #authentication_classes = [BasicAuthentication, SessionAuthentication]
+    #permission_classes = [IsOwnerBeOrReadOnly]
+    
     def get_serializer_class(self):
         if self.action == "create":
             return BeQuestionSerializer
@@ -63,7 +64,7 @@ class BeQuestionViewSet(ModelViewSet):
             return BeQuestionDetailSerializer
         if self.action == "retrieve":
             return BeQuestionDetailSerializer
-        if self.action == "update":
+        if self.action == "update": 
             return BeQuestionDetailSerializer
         
         return BeQuestionSerializer
@@ -81,7 +82,9 @@ class BeQuestionViewSet(ModelViewSet):
 class BeQuestionListSet(ModelViewSet):
     queryset = BeQuestion.objects.all().order_by('-created_at')
     serializer_class = BeQuestionDetailSerializer
-    
+    # authentication_classes = [BasicAuthentication, SessionAuthentication]
+    # authentication_classes = [TokenAuthentication]
+
     def get_queryset(self, **kwargs): # Override
         ownerId = self.kwargs['ownerId']
         return self.queryset.filter(ownerId=ownerId)
@@ -89,7 +92,7 @@ class BeQuestionListSet(ModelViewSet):
 #답변 CRUD. create는 CommentCreateSerializer, 나머지는 CommentSerializer
 class CommentViewSet(ModelViewSet):
     queryset = Comment.objects.all().order_by('-created_at')
-    permission_classes = [IsOwnerOrReadOnly]
+    #permission_classes = [IsOwnerOrReadOnly]
     
     def get_serializer_class(self): 
         writer = self.request.user
@@ -124,6 +127,7 @@ class CommentViewSet(ModelViewSet):
             if comment.open_user.filter(id=request.user.id).exists():       # open_user로 flag처럼 사용해야 하는데..
                 print('이미 열어본 답변')
                 serializer=CommentSerializer(comment)
+                print(serializer.data.keys)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             else:
                 print('처음 열어보는 답변')
@@ -153,7 +157,7 @@ class CommentViewSet(ModelViewSet):
 
 #답변 추천
 class CommentLikeViewSet(ModelViewSet):
-    authentication_classes = [BasicAuthentication, SessionAuthentication]          # 로그인 한 사람만 누를 수 있음
+    #authentication_classes = [BasicAuthentication, SessionAuthentication]          # 로그인 한 사람만 누를 수 있음
     queryset = Comment.objects.all()    
     serializer_class = CommentLikeSerializer
 
@@ -194,7 +198,7 @@ class CommentLikeViewSet(ModelViewSet):
 ###########################################################################
 class BeCommentViewSet(ModelViewSet):
     queryset = BeComment.objects.all().order_by('-created_at')
-    permission_classes = [IsOwnerOrReadOnly]
+    #permission_classes = [IsOwnerOrReadOnly]
     
     def get_serializer_class(self): 
         if self.action == 'list':
@@ -219,7 +223,7 @@ class BeCommentViewSet(ModelViewSet):
         
     #답변 누르면 포인트 차감
     def retrieve(self, request, pk=None, **kwargs):
-        question_id = self.kwargs['beQuestion_id']
+        question_id = self.kwargs['bequestion_id']
         question = get_object_or_404(BeQuestion, id=question_id)  # questionId로 해당 질문 받아옴
         # print(question.writer.id)                               # 질문 작성자 ID
         if self.request.user.id != None:                        # 로그인 했을때
@@ -228,12 +232,13 @@ class BeCommentViewSet(ModelViewSet):
             if comment.open_user.filter(id=request.user.id).exists():       # open_user로 flag처럼 사용해야 하는데..
                 print('이미 열어본 답변')
                 serializer=BeCommentSerializer(comment)
+                print(serializer.data)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             else:
                 print('처음 열어보는 답변')
                 comment.open_user.add(request.user)
                 loginUser = request.user
-                if loginUser.id == question.writer.id:          # 질문 작성자와 로그인 유저가 같음 -> 내 질문 내가 보는거
+                if loginUser.id == question.ownerId.id:          # 질문 작성자와 로그인 유저가 같음 -> 내 질문 내가 보는거
                     loginUser.point -= 50
                 else:                                           # 질문 작성자와 로그인 유저가 다름 -> 남 질문 내가 보기
                     print('-100')   
@@ -252,13 +257,13 @@ class BeCommentViewSet(ModelViewSet):
         return Response(serializer.data, status=status.HTTP_401_UNAUTHORIZED)
         
     def get_queryset(self, **kwargs): # Override
-        question_id = self.kwargs['beQuestion_id']
+        question_id = self.kwargs['bequestion_id']
         print(question_id)
         return self.queryset.filter(questionId=question_id)
 
 #답변 추천 로직
 class BeCommentLikeViewSet(ModelViewSet):
-    authentication_classes = [BasicAuthentication, SessionAuthentication]          # 로그인 한 사람만 누를 수 있음
+    #authentication_classes = [BasicAuthentication, SessionAuthentication]          # 로그인 한 사람만 누를 수 있음
     queryset = BeComment.objects.all()    
     serializer_class = BeCommentLikeSerializer
 
