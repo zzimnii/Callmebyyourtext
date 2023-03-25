@@ -16,18 +16,17 @@ class CommentSerializer(ModelSerializer):
     writer = serializers.ReadOnlyField(source = 'writer.name')
     class Meta:
         model = Comment
-        fields = ['id','comment', 'questionId', 'writer', 'anonymous', 'created_at', 'open_user']
+        fields = ['commentId','comment', 'questionId', 'writer', 'anonymous', 'created_at', 'open_user']
 
 class CommentCreateSerializer(ModelSerializer):
     permission_classes = [AllowAny]
     class Meta:
         model = Comment
-        fields = ['id', 'questionId', 'comment', 'anonymous', 'created_at']
+        fields = ['commentId', 'questionId', 'comment', 'anonymous', 'created_at']
 
     def create(self, validated_data):
         x = datetime.now()
         return Comment.objects.create(
-            id = x,
             comment=validated_data['comment'],
             writer=validated_data['writer'],
             anonymous=validated_data['anonymous'],
@@ -50,7 +49,7 @@ class CommentLikeSerializer(ModelSerializer):
 
     class Meta:
         model = Comment
-        fields=['id', 'like_user', 'like_count']  
+        fields=['commentId', 'like_user', 'like_count']  
 
 ###################################################     BeComment
 class BeCommentSerializer(ModelSerializer):
@@ -63,19 +62,18 @@ class BeCommentSerializer(ModelSerializer):
     writer = serializers.ReadOnlyField(source = 'writer.name')
     class Meta:
         model = BeComment
-        fields = ['id','comment', 'questionId', 'writer', 'anonymous', 'created_at', 'open_user']
+        fields = ['beCommentId','comment', 'questionId', 'writer', 'anonymous', 'created_at', 'open_user']
 
 
 class BeCommentCreateSerializer(ModelSerializer):
     permission_classes = [AllowAny]
     class Meta:
         model = BeComment
-        fields = ['id', 'questionId', 'comment', 'anonymous', 'created_at']
+        fields = ['beCommentId', 'questionId', 'comment', 'anonymous', 'created_at']
 
     def create(self, validated_data):
         x = datetime.now()
         return BeComment.objects.create(
-            id = x,
             comment=validated_data['comment'],
             writer=validated_data['writer'],
             anonymous=validated_data['anonymous'],
@@ -98,20 +96,17 @@ class BeCommentLikeSerializer(ModelSerializer):
 
     class Meta:
         model = BeComment
-        fields=['id', 'like_user', 'like_count']  
+        fields=['beCommentId', 'like_user', 'like_count']  
 ################################################################################################
 class QuestionSerializer(ModelSerializer):
     writer = serializers.ReadOnlyField(source = 'writer.name')
     class Meta:
         model = Question
-        fields = ['id', 'question', 'writer', 'created_at']
+        fields = ['questionId', 'question', 'writer', 'created_at']
 
     def create(self, validated_data):
         x = datetime.now()
-        x = x.strftime('%y%m%d%H%M%S%f')
-        print(x)
         return Question.objects.create(
-            id = x,
             writer=validated_data['writer'],
             question=validated_data['question']
             )
@@ -121,7 +116,7 @@ class QuestionDetailSerializer(ModelSerializer):
     writer = serializers.ReadOnlyField(source = 'writer.name')
     class Meta:
         model = Question
-        fields = ['id', 'question', 'writer', 'comments', 'created_at']
+        fields = ['questionId', 'question', 'writer', 'comments', 'created_at']
 
 class RecQuestionSerializer(ModelSerializer):
     class Meta:
@@ -131,12 +126,11 @@ class RecQuestionSerializer(ModelSerializer):
 class BeQuestionSerializer(ModelSerializer):
     class Meta:
         model = BeQuestion
-        fields = ['id', 'q', 'ownerId', 'created_at']
+        fields = ['beQuestionId', 'q', 'ownerId', 'created_at']
 
     def create(self, validated_data):
         x = datetime.now()
         return BeQuestion.objects.create(
-            id = x,
             q=validated_data['q'],
             ownerId=validated_data['ownerId']
             )
@@ -145,4 +139,4 @@ class BeQuestionDetailSerializer(ModelSerializer):
     beComments = BeCommentSerializer(many=True, read_only=True)
     class Meta:
         model = BeQuestion
-        fields = ['id', 'q', 'ownerId', 'beComments', 'created_at', 'accept']
+        fields = ['beQuestionId', 'q', 'ownerId', 'beComments', 'created_at', 'accept']
