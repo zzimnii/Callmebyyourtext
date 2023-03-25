@@ -4,7 +4,6 @@ from django.conf import settings
 from django.utils import timezone
 
 class Question(models.Model):
-    id = models.AutoField(primary_key=True)
     question = models.TextField()
     writer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='question', null = True) #질문 작성자
     created_at = models.DateTimeField(auto_now_add=True, null=True)
