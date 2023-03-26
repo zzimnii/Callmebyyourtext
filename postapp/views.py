@@ -160,7 +160,7 @@ class CommentViewSet(ModelViewSet):
         return Response(serializer.data, status=status.HTTP_401_UNAUTHORIZED)
         
     def get_queryset(self, **kwargs): # Override
-        question_id = self.kwargs['question_id']
+        question_id = self.kwargs['questionId']
         return self.queryset.filter(questionId=question_id)
 
 #답변 추천
