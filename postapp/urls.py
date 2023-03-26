@@ -35,10 +35,10 @@ urlpatterns = [
     # path('recQuestion/', include(question_router.urls)),
     path('', include(beQuestion_router.urls)),
     path('<int:ownerId>/', include(beQuestionList_router.urls)),
-    path('bequestions/<int:bequestion_id>/', include(beComment_router.urls)),
-    path('becomments/<int:becomment_id>/',include(beCommentLike_router.urls)),
+    path('bequestions/<int:pk>/', include(beComment_router.urls)),
+    path('becomments/<int:pk>/',include(beCommentLike_router.urls)),
 
-    path('questions/<int:question_id>/', include(comment_router.urls)),  #질문 수정/삭제
-    path('comments/<int:comment_id>/',include(comment_router.urls)),    #질문에 답변 작성
-    path('comments/<int:comment_id>/',include(commentLike_router.urls)),
+    path('questions/<int:questionId>/', include(comment_router.urls)),  #질문 수정/삭제
+    path('comments/<int:pk>/',include(comment_router.urls)),    #질문에 답변 작성
+    path('comments/<int:pk>/',include(commentLike_router.urls)),
  ]

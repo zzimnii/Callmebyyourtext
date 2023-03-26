@@ -119,12 +119,12 @@ class CommentViewSet(ModelViewSet):
         
     #답변 누르면 포인트 차감
     def retrieve(self, request, pk=None, **kwargs):
-        question_id = self.kwargs['question_id']
-        question = get_object_or_404(Question, id=question_id)  # questionId로 해당 질문 받아옴
+        question_id = self.kwargs['questionId']
+        question = get_object_or_404(Question, questionId=question_id)  # questionId로 해당 질문 받아옴
         # print(question.writer.id)                               # 질문 작성자 ID
         if self.request.user.id != None:                        # 로그인 했을때
             comment = Comment.objects.all()
-            comment = get_object_or_404(Comment, pk=pk)
+            comment = get_object_or_404(Comment, commentId=pk)
             if comment.open_user.filter(id=request.user.id).exists():       # open_user로 flag처럼 사용해야 하는데..
                 print('이미 열어본 답변')
                 serializer=CommentSerializer(comment)
@@ -168,8 +168,8 @@ class CommentLikeViewSet(ModelViewSet):
             return CommentLikeSerializer
         
     def list(self, request, **kwargs):
-        comment_id = self.kwargs['comment_id']
-        comment = get_object_or_404(Comment, id=comment_id)
+        comment_id = self.kwargs['pk']
+        comment = get_object_or_404(Comment, pk=comment_id)
         serializer = CommentLikeSerializer(comment)
 
         if self.request.user.id != None:                        # 로그인 했을때
