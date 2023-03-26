@@ -10,6 +10,8 @@ from rest_framework import status
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
 from .permissions import IsOwnerOrReadOnly, IsOwnerBeOrReadOnly
+import jwt
+from login.models import User
 
 #질문 CRUD
 class QuestionViewSet(ModelViewSet):
@@ -30,10 +32,15 @@ class QuestionViewSet(ModelViewSet):
         return QuestionSerializer
 
     def perform_create(self, serializer, **kwargs):
-        if self.request.user.id == None:
-            serializer.save(writer=self.request.user.id)
-        else:
-            serializer.save(writer = self.request.user)
+        access_token = self.request.META.get('HTTP_AUTHORIZATION', '').split(' ')[1]
+        decoded = jwt.decode(access_token, algorithms=['HS256'], verify=False)
+        user_id = decoded['user_id']
+        writer = User.objects.get(pk=user_id)
+        serializer.save(writer=writer)
+        # if self.request.user.id == None:
+        #     serializer.save(writer=self.request.user.id)
+        # else:
+        #     serializer.save(writer = self.request.user)
 
 #UserId별 질문 리스트
 class QuestionListSet(ModelViewSet):
