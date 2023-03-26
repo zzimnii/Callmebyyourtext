@@ -6,6 +6,24 @@ from django.contrib.auth.password_validation import validate_password
 from rest_framework.validators import UniqueValidator
 from datetime import datetime
 
+# from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+# class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+#     # UserSerializer를 상속받아 원하는 필드를 추가합니다.
+#     class UserSerializer(serializers.ModelSerializer):
+#         class Meta:
+#             model = User
+#             fields = ('id', 'email', 'point')
+
+#     user = UserSerializer()
+
+#     def validate(self, attrs):
+#         data = super().validate(attrs)
+#         refresh = self.get_token(self.user)
+#         data['refresh'] = str(refresh)
+#         data['access'] = str(refresh.access_token)
+#         return data
+
 class UserSerializer(serializers.ModelSerializer):
     name = serializers.CharField(
         required=True,
@@ -46,7 +64,7 @@ class UserSerializer(serializers.ModelSerializer):
 class ProfileSerializer(serializers.ModelSerializer): # 전체 유저 정보 조회
     class Meta:
         model = User
-        fields = ['email', 'name', 'point']
+        fields = ['id', 'email', 'name', 'point']
         read_only_fields = ['point'] # 포인트는 수정 불가!
 
 class LoginSerializer(serializers.Serializer):  # 회원가입한 유저 로그인 

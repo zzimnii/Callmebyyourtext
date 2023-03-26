@@ -44,19 +44,20 @@ INSTALLED_APPS = [
 REST_FRAMEWORK = {
 	'DEFAULT_AUTHENTICATION_CLASSES': [
     #'rest_framework.authentication.SessionAuthentication',
-    'rest_framework.authentication.TokenAuthentication', 
-    # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+    #'rest_framework.authentication.TokenAuthentication', 
+    'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-    'rest_framework.permissions.AllowAny',
+    # 'rest_framework.permissions.AllowAny',
     # 'rest_framework.authentication.SessionAuthentication',
    ],
 }
 
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-SESSION_COOKIE_AGE = 300 # second Unit
-SESSION_SAVE_EVERY_REQUEST = True
-SESSION_COOKIE_HTTPONLY = False # js에서 cookie 받아올 수 있도록 하는거라는디...
+# SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+# SESSION_COOKIE_AGE = 300 # second Unit
+# SESSION_SAVE_EVERY_REQUEST = True
+# SESSION_COOKIE_HTTPONLY = True # js에서 cookie 받아올 수 있도록 하는거라는디...
+#                                # session 안써서 다시 True로
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware', 
@@ -176,8 +177,8 @@ AUTH_USER_MODEL = 'login.User'
 
 SIMPLE_JWT={
     # "TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.MyTokenObtainPairSerializer",
-    'ACCESS_TOKEN_LIFETIME':datetime.timedelta(minutes=10),
-    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=7),
+    'ACCESS_TOKEN_LIFETIME':datetime.timedelta(minutes=30),
+    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=1),
     'ROTATE_REFRESH_TOKEN': True,
     'BLACKLIST_AFTER_ROTATION': True,
     "UPDATE_LAST_LOGIN": True,
