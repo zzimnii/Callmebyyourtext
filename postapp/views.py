@@ -77,12 +77,14 @@ class BeQuestionViewSet(ModelViewSet):
         
         return BeQuestionSerializer
 
-    def perform_update(self, serializer):
+    def partial_update(self, serializer):
         if self.request.user.id != None:        #로그인 했음.
             loginUser = self.request.user
+            print('요기')
             serializer.save(ownerId=self.request.user)
             update_serial=BeQuestionSerializer(loginUser, data=self.request.data, partial=True)
             update_serial.accept = True
+            print(update_serial.accept)
             if update_serial.is_valid():
                 update_serial.save()
 
@@ -179,18 +181,25 @@ class CommentLikeViewSet(ModelViewSet):
         comment = get_object_or_404(Comment, pk=comment_id)
         serializer = CommentLikeSerializer(comment)
 
-        if self.request.user.id != None:                        # 로그인 했을때
+        access_token = self.request.META.get('HTTP_AUTHORIZATION', '').split(' ')[1]
+        decoded = jwt.decode(access_token, algorithms=['HS256'], verify=False)
+        user_id = decoded['user_id']
+        loginUser = User.objects.get(pk=user_id)
+        print(loginUser)
+        
+        if loginUser != None:                        # 로그인 했을때
             comment = get_object_or_404(Comment, pk=comment_id)
-            loginUser = self.request.user
-            if comment.like_user.filter(id=self.request.user.id).exists():          # 이미 추천 누른 경우
-                comment.like_user.remove(self.request.user)
+            if comment.like_user.filter(id=user_id).exists():          # 이미 추천 누른 경우
+                print('이미 누름')
+                comment.like_user.remove(loginUser)
                 comment.like_count -= 1
 
             else:                                              # 추천 처음 누름
                 if loginUser.id == comment.writer.id:          # 답변 작성자와 로그인 유저가 같음 -> 내 답변 내가 추천X
                     print('자기 답변 추천 금지')                
                 else:                                          # 답변 작성자와 로그인 유저가 다름 -> 남 답변 내가 추천
-                    comment.like_user.add(self.request.user)
+                    print('남 답변 내가 추천')
+                    comment.like_user.add(loginUser)
                     comment.like_count += 1
                     
             update_serial=CommentLikeSerializer(comment, data=request.data, partial=True)
@@ -223,17 +232,29 @@ class BeCommentViewSet(ModelViewSet):
         if self.request.user.id == None:            # 로그인 안해도 답변 남길 수 있음
             serializer.save(writer=self.request.user.id)
         else:                                       # 로그인 유저는 답변 남기면 포인트 +50
-            loginUser = self.request.user
-            serializer.save(writer=self.request.user)
-            loginUser.point += 50
-            update_serial=PointSerializer(loginUser, data=self.request.data, partial=True)
+            access_token = self.request.META.get('HTTP_AUTHORIZATION', '').split(' ')[1]
+            decoded = jwt.decode(access_token, algorithms=['HS256'], verify=False)
+            user_id = decoded['user_id']
+            writer = User.objects.get(pk=user_id)
+            serializer.save(writer=writer)
+
+            serializer.save(writer=writer)
+            writer.point += 50
+            update_serial=PointSerializer(writer, data=self.request.data, partial=True)
             if update_serial.is_valid():
                 update_serial.save()
+
+            # loginUser = self.request.user
+            # serializer.save(writer=self.request.user)
+            # loginUser.point += 50
+            # update_serial=PointSerializer(loginUser, data=self.request.data, partial=True)
+            # if update_serial.is_valid():
+            #     update_serial.save()
         
     #답변 누르면 포인트 차감
     def retrieve(self, request, pk=None, **kwargs):
-        question_id = self.kwargs['bequestion_id']
-        question = get_object_or_404(BeQuestion, id=question_id)  # questionId로 해당 질문 받아옴
+        question_id = self.kwargs['beQuestionId']
+        question = get_object_or_404(BeQuestion, beQuestionId=question_id)  # questionId로 해당 질문 받아옴
         # print(question.writer.id)                               # 질문 작성자 ID
         if self.request.user.id != None:                        # 로그인 했을때
             comment = BeComment.objects.all()
@@ -282,22 +303,29 @@ class BeCommentLikeViewSet(ModelViewSet):
             return BeCommentLikeSerializer
         
     def list(self, request, **kwargs):
-        comment_id = self.kwargs['comment_id']
-        comment = get_object_or_404(BeComment, id=comment_id)
+        comment_id = self.kwargs['pk']
+        comment = get_object_or_404(BeComment, pk=comment_id)
         serializer = BeCommentLikeSerializer(comment)
 
-        if self.request.user.id != None:                        # 로그인 했을때
+        access_token = self.request.META.get('HTTP_AUTHORIZATION', '').split(' ')[1]
+        decoded = jwt.decode(access_token, algorithms=['HS256'], verify=False)
+        user_id = decoded['user_id']
+        loginUser = User.objects.get(pk=user_id)
+        print(loginUser)
+        
+        if loginUser != None:                        # 로그인 했을때
             comment = get_object_or_404(BeComment, pk=comment_id)
-            loginUser = self.request.user
-            if comment.like_user.filter(id=self.request.user.id).exists():          # 이미 추천 누른 경우
-                comment.like_user.remove(self.request.user)
+            if comment.like_user.filter(id=user_id).exists():          # 이미 추천 누른 경우
+                print('이미 누름')
+                comment.like_user.remove(loginUser)
                 comment.like_count -= 1
 
             else:                                              # 추천 처음 누름
                 if loginUser.id == comment.writer.id:          # 답변 작성자와 로그인 유저가 같음 -> 내 답변 내가 추천X
                     print('자기 답변 추천 금지')                
                 else:                                          # 답변 작성자와 로그인 유저가 다름 -> 남 답변 내가 추천
-                    comment.like_user.add(self.request.user)
+                    print('남 답변 내가 추천')
+                    comment.like_user.add(loginUser)
                     comment.like_count += 1
                     
             update_serial=BeCommentLikeSerializer(comment, data=request.data, partial=True)
@@ -308,5 +336,5 @@ class BeCommentLikeViewSet(ModelViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         
     def get_queryset(self, **kwargs): # Override
-        comment_id = self.kwargs['comment_id']
-        return self.queryset.filter(id=comment_id)   
+        comment_id = self.kwargs['becomment_id']
+        return self.queryset.filter(id=comment_id)

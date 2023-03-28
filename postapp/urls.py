@@ -35,7 +35,7 @@ urlpatterns = [
     # path('recQuestion/', include(question_router.urls)),
     path('', include(beQuestion_router.urls)),
     path('<int:ownerId>/', include(beQuestionList_router.urls)),
-    path('bequestions/<int:pk>/', include(beComment_router.urls)),
+    path('bequestions/<int:beQuestionId>/', include(beComment_router.urls)),
     path('becomments/<int:pk>/',include(beCommentLike_router.urls)),
 
     path('questions/<int:questionId>/', include(comment_router.urls)),  #질문 수정/삭제
