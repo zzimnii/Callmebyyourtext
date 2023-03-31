@@ -12,7 +12,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
 from .permissions import IsOwnerOrReadOnly, IsOwnerBeOrReadOnly
 import jwt
 from login.models import User
-
+from blossom.settings import JWT_SECRET_KEY
 #질문 CRUD
 class QuestionViewSet(ModelViewSet):
     queryset = Question.objects.all().order_by('-created_at')
@@ -33,7 +33,7 @@ class QuestionViewSet(ModelViewSet):
 
     def perform_create(self, serializer, **kwargs):
         access_token = self.request.META.get('HTTP_AUTHORIZATION', '').split(' ')[1]
-        decoded = jwt.decode(access_token, algorithms=['HS256'], verify=False)
+        decoded = jwt.decode(access_token, algorithms=['HS256'], verify=True, key=JWT_SECRET_KEY)
         user_id = decoded['user_id']
         writer = User.objects.get(pk=user_id)
         serializer.save(writer=writer)
