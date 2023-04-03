@@ -125,7 +125,7 @@ class CommentViewSet(ModelViewSet):
             update_serial=PointSerializer(loginUser, data=self.request.data, partial=True)
             if update_serial.is_valid():
                 update_serial.save()
-        
+
     #답변 누르면 포인트 차감
     def retrieve(self, request, pk=None, **kwargs):
         question_id = self.kwargs['questionId']
@@ -164,6 +164,38 @@ class CommentViewSet(ModelViewSet):
     def get_queryset(self, **kwargs): # Override
         question_id = self.kwargs['questionId']
         return self.queryset.filter(questionId=question_id)
+
+#답변 공개
+class CommentPublishViewSet(ModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+
+    def get_serializer_class(self):
+        if self.action == 'update':
+            return CommentSerializer
+    
+    def partial_update(self, serializer, request, pk=None, **kwargs):
+        question_id = self.kwargs['questionId']
+        question = get_object_or_404(Question, questionId=question_id)  # questionId로 해당 질문 받아옴
+
+        if self.request.user.id != None:        #로그인 했음.
+            print('이거')
+            loginUser = self.request.user
+            if question.writer.id == loginUser.id:
+                print(question.writer.id)
+                print(loginUser.id)
+                # serializer.save(ownerId=self.request.user)
+                update_serial=CommentSerializer(loginUser, data=self.request.data, partial=True)
+                update_serial.publish = True
+                print(update_serial.publish)
+                if update_serial.is_valid():
+                    update_serial.save()
+
+    def get_queryset(self, **kwargs): # Override
+        question_id = self.kwargs['questionId']
+        return self.queryset.filter(questionId=question_id)
+
 
 #답변 추천
 class CommentLikeViewSet(ModelViewSet):

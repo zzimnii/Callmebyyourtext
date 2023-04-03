@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import SimpleRouter
-from .views import QuestionViewSet, CommentViewSet, QuestionListSet, CommentLikeViewSet, RecQuestionViewSet, BeQuestionViewSet, BeQuestionListSet, BeCommentViewSet, BeCommentLikeViewSet
+from .views import QuestionViewSet, CommentViewSet, QuestionListSet, CommentLikeViewSet, CommentPublishViewSet, RecQuestionViewSet, BeQuestionViewSet, BeQuestionListSet, BeCommentViewSet, BeCommentLikeViewSet
 from . import views
 
 
@@ -15,6 +15,9 @@ comment_router.register('comments', CommentViewSet, basename='comment')
 
 commentLike_router = SimpleRouter(trailing_slash=False)
 commentLike_router.register('likes', CommentLikeViewSet, basename='likes')
+
+commentPublish_router = SimpleRouter(trailing_slash=False)
+commentPublish_router.register('publish', CommentPublishViewSet, basename='publish')
 
 beQuestion_router = SimpleRouter(trailing_slash=False)
 beQuestion_router.register('bequestions', BeQuestionViewSet, basename='beQuestion')
@@ -41,4 +44,5 @@ urlpatterns = [
     path('questions/<int:questionId>/', include(comment_router.urls)),  #질문 수정/삭제
     path('comments/<int:pk>/',include(comment_router.urls)),    #질문에 답변 작성
     path('comments/<int:pk>/',include(commentLike_router.urls)),
+    path('questions/<int:questionId>/comments/<int:pk>/',include(commentPublish_router.urls)),
  ]

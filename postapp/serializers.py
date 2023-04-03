@@ -16,7 +16,7 @@ class CommentSerializer(ModelSerializer):
     writer = serializers.ReadOnlyField(source = 'writer.name')
     class Meta:
         model = Comment
-        fields = ['commentId','comment', 'questionId', 'writer', 'anonymous', 'created_at', 'open_user']
+        fields = ['commentId','comment', 'questionId', 'writer', 'anonymous', 'created_at', 'open_user', 'publish']
 
 class CommentCreateSerializer(ModelSerializer):
     permission_classes = [AllowAny]
