@@ -80,7 +80,6 @@ class BeQuestionViewSet(ModelViewSet):
     def partial_update(self, serializer):
         if self.request.user.id != None:        #로그인 했음.
             loginUser = self.request.user
-            print('요기')
             serializer.save(ownerId=self.request.user)
             update_serial=BeQuestionSerializer(loginUser, data=self.request.data, partial=True)
             update_serial.accept = True
@@ -112,6 +111,8 @@ class CommentViewSet(ModelViewSet):
             return CommentSerializer
         if self.action == 'create':
             return CommentCreateSerializer
+        if self.action == 'update':
+            return CommentSerializer
         return CommentCreateSerializer
 
     #답변 생성하면 포인트 +50                       -> 내 질문에 내가 답변하는거 막아야하나?
@@ -125,7 +126,7 @@ class CommentViewSet(ModelViewSet):
             update_serial=PointSerializer(loginUser, data=self.request.data, partial=True)
             if update_serial.is_valid():
                 update_serial.save()
-        
+
     #답변 누르면 포인트 차감
     def retrieve(self, request, pk=None, **kwargs):
         question_id = self.kwargs['questionId']
@@ -161,6 +162,26 @@ class CommentViewSet(ModelViewSet):
             serializer=LoginSerializer()
         return Response(serializer.data, status=status.HTTP_401_UNAUTHORIZED)
         
+    #답변 공개 여부
+    def update(self, request, *args,**kwargs):
+        question_id = self.kwargs['questionId']
+        question = get_object_or_404(Question, questionId=question_id)  # questionId로 해당 질문 받아옴
+        comment_id = self.kwargs['pk']
+        comment = get_object_or_404(Comment, pk=comment_id)
+
+        if self.request.user.id != None:        #로그인 했음.
+            loginUser = self.request.user
+            print('답변 공개여부22')
+            if question.writer.id == loginUser.id:
+                print(question.writer.id)
+                print(loginUser.id)
+                update_serial=CommentSerializer(comment, data=self.request.data, partial=True)
+                update_serial.publish = True
+                if update_serial.is_valid():
+                    update_serial.save()
+
+                return Response(update_serial.data, status=status.HTTP_200_OK)
+            
     def get_queryset(self, **kwargs): # Override
         question_id = self.kwargs['questionId']
         return self.queryset.filter(questionId=question_id)
