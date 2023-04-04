@@ -45,6 +45,8 @@ class Comment(models.Model):
     anonymous = models.BooleanField(default=True, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     open_user = models.ManyToManyField(User, related_name='open_users')
+    #like_count = models.PositiveIntegerField(default=0, null=True)
+
     like_user = models.ManyToManyField(User, related_name='like_users')
     like_count = models.PositiveIntegerField(default=0, null=True)
     #답변 공개 여부

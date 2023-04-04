@@ -14,9 +14,15 @@ class CommentSerializer(ModelSerializer):
 
     open_user = UserSerializer(read_only=True, many=True)
     writer = serializers.ReadOnlyField(source = 'writer.name')
+    
     class Meta:
         model = Comment
         fields = ['commentId','comment', 'questionId', 'writer', 'anonymous', 'created_at', 'open_user', 'publish']
+        def update(self, instance, validated_data):
+            print(instance)
+            instance.publish = validated_data.get('publish', instance.publish)
+            instance.save()
+            return instance
 
 class CommentCreateSerializer(ModelSerializer):
     permission_classes = [AllowAny]
