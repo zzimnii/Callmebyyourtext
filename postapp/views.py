@@ -6,6 +6,7 @@ from rest_framework.viewsets import ModelViewSet
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.exceptions import AuthenticationFailed
 
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
@@ -33,7 +34,10 @@ class QuestionViewSet(ModelViewSet):
 
     def perform_create(self, serializer, **kwargs):
         access_token = self.request.META.get('HTTP_AUTHORIZATION', '').split(' ')[1]
-        decoded = jwt.decode(access_token, algorithms=['HS256'], verify=True, key=JWT_SECRET_KEY)
+        try:
+            decoded = jwt.decode(access_token, algorithms=['HS256'], verify=True, key=JWT_SECRET_KEY)
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Token expired')
         user_id = decoded['user_id']
         writer = User.objects.get(pk=user_id)
         serializer.save(writer=writer)
