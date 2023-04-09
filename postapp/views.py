@@ -147,6 +147,7 @@ class CommentViewSet(ModelViewSet):
             else:
                 print('처음 열어보는 답변')
                 comment.open_user.add(request.user)
+                comment.open_count += 1
                 loginUser = request.user
                 if loginUser.id == question.writer.id:          # 질문 작성자와 로그인 유저가 같음 -> 내 질문 내가 보는거
                     loginUser.point -= 50
@@ -154,9 +155,14 @@ class CommentViewSet(ModelViewSet):
                     print('-100')   
                     loginUser.point -= 100
                 update_serial=PointSerializer(loginUser, data=request.data, partial=True)
+                update_serial2=CommentSerializer(comment, data=request.data, partial=True)
 
                 if update_serial.is_valid():
                     update_serial.save()
+                    serializer=CommentSerializer(comment)
+
+                if update_serial2.is_valid():
+                    update_serial2.save()
                     serializer=CommentSerializer(comment)
 
                 return Response(serializer.data, status=status.HTTP_200_OK)
