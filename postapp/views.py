@@ -14,6 +14,8 @@ from .permissions import IsOwnerOrReadOnly, IsOwnerBeOrReadOnly
 import jwt
 from login.models import User
 from blossom.settings import JWT_SECRET_KEY
+
+
 #질문 CRUD
 class QuestionViewSet(ModelViewSet):
     queryset = Question.objects.all().order_by('-created_at')
@@ -28,6 +30,8 @@ class QuestionViewSet(ModelViewSet):
         if self.action == "list":
             return QuestionDetailSerializer
         if self.action == "retrieve":
+            return QuestionDetailSerializer
+        if self.action == "update":
             return QuestionDetailSerializer
         
         return QuestionSerializer
@@ -45,6 +49,31 @@ class QuestionViewSet(ModelViewSet):
         #     serializer.save(writer=self.request.user.id)
         # else:
         #     serializer.save(writer = self.request.user)
+
+    def update(self, request, *args, pk=None, **kwargs):
+        question = get_object_or_404(Question, questionId=pk)
+
+        access_token = self.request.META.get('HTTP_AUTHORIZATION', '').split(' ')[1]
+        try:
+            decoded = jwt.decode(access_token, algorithms=['HS256'], verify=True, key=JWT_SECRET_KEY)
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Token expired')
+        user_id = decoded['user_id']
+        loginUser = User.objects.get(pk=user_id)
+
+        if question.writer.id == loginUser.id:
+            serializer=QuestionDetailSerializer(question, data=self.request.data, partial=True)
+            serializer.publish = False
+            if serializer.is_valid():
+                serializer.save()
+                    
+                return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        if self.request.user.id == None:
+            print('질문 작성자 아님')
+            serializer=LoginSerializer()
+        return Response(serializer.data, status=status.HTTP_401_UNAUTHORIZED)
+
 
 #UserId별 질문 리스트
 class QuestionListSet(ModelViewSet):
@@ -142,7 +171,6 @@ class CommentViewSet(ModelViewSet):
             if comment.open_user.filter(id=request.user.id).exists():       # open_user로 flag처럼 사용해야 하는데..
                 print('이미 열어본 답변')
                 serializer=CommentSerializer(comment)
-                print(serializer.data.keys)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             else:
                 print('처음 열어보는 답변')
@@ -186,7 +214,7 @@ class CommentViewSet(ModelViewSet):
                 print(question.writer.id)
                 print(loginUser.id)
                 update_serial=CommentSerializer(comment, data=self.request.data, partial=True)
-                update_serial.publish = True
+                update_serial.publish = False
                 if update_serial.is_valid():
                     update_serial.save()
 
