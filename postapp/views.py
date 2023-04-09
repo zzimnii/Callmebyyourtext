@@ -186,7 +186,7 @@ class CommentViewSet(ModelViewSet):
                 print(question.writer.id)
                 print(loginUser.id)
                 update_serial=CommentSerializer(comment, data=self.request.data, partial=True)
-                update_serial.publish = True
+                update_serial.publish = False
                 if update_serial.is_valid():
                     update_serial.save()
 

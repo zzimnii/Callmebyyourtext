@@ -50,7 +50,7 @@ class Comment(models.Model):
     like_user = models.ManyToManyField(User, related_name='like_users')
     like_count = models.PositiveIntegerField(default=0, null=True)
     #답변 공개 여부
-    publish = models.BooleanField(default=False, null=True)
+    publish = models.BooleanField(default=True, null=True)
 
     def __str__(self):
         return self.comment
