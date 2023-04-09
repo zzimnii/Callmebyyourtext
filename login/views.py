@@ -9,11 +9,35 @@ from rest_framework.authentication import SessionAuthentication, TokenAuthentica
 from django.contrib.auth import login, logout, authenticate
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
+from blossom.settings import JWT_SECRET_KEY
+import jwt
 # from rest_framework_simplejwt.views import TokenObtainPairView
 
 
 # class MyTokenObtainPairView(TokenObtainPairView):
 #     serializer_class = MyTokenObtainPairSerializer
+
+class RefreshTokenView(APIView): # refresh_token을 이용한 사용자 인증을 한단계 더 거침
+
+    def post(self, request):
+        refresh_token = request.data.get('refresh')
+        try:
+            decoded_token = jwt.decode(refresh_token, algorithms=['HS256'], verify=True, key=JWT_SECRET_KEY)
+            user_id = decoded_token.get('user_id')
+        except jwt.ExpiredSignatureError:
+            return Response({'detail': 'Refresh token has expired.'}, status=status.HTTP_401_UNAUTHORIZED)
+        except jwt.InvalidTokenError:
+            return Response({'detail': 'Invalid token.'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        try:
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return Response({'detail': 'User does not exist.'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        refresh = RefreshToken.for_user(user)
+        access = str(refresh.access_token)
+
+        return Response({'access_token': access})
 
 class BlacklistRefreshView(APIView):   # 로그아웃시 리프레시 토큰 blacklist
     def post(self, request):

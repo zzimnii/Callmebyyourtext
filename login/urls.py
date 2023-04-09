@@ -1,7 +1,7 @@
 from django.urls import path, include
 from .views import UserCreate, ProfileList, LoginView #, LogoutView
 from rest_framework_simplejwt import views as jwt_views
-from .views import HelloView, BlacklistRefreshView # MyTokenObtainPairView
+from .views import HelloView, BlacklistRefreshView, RefreshTokenView # MyTokenObtainPairView
 # from rest_framework_simplejwt.views import (
 #     TokenObtainSlidingView,
 #     TokenRefreshSlidingView,
@@ -19,7 +19,8 @@ urlpatterns = [
     # path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     # => 로그인시 access_token, refresh_token 발급
 
-    path('token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
+    # path('token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
+    path('token/refresh/', RefreshTokenView.as_view(), name='token_refresh'), # 사용자 인증을 위해(cors)
     # => body에 "refresh" : refresh_token 넣고 post 요청시 새로운 access_token 발급
     # => 이전의 access_token도 blacklist로 넣고싶은데 그건 아직 못함
 

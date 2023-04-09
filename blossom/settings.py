@@ -178,7 +178,7 @@ AUTH_USER_MODEL = 'login.User'
 SIMPLE_JWT={
     # "TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.MyTokenObtainPairSerializer",
     'ACCESS_TOKEN_LIFETIME':datetime.timedelta(minutes=1),
-    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=1),
+    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(minutes=1),
     'ROTATE_REFRESH_TOKEN': True,
     'BLACKLIST_AFTER_ROTATION': True,
     "UPDATE_LAST_LOGIN": True,
