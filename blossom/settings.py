@@ -71,14 +71,19 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ORIGIN_ALLOW_ALL = False
 CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_ALLOW_ALL = False
 
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',
     'http://localhost:8000',
-    'http://localhost:8080',
 ]
+
+CORS_ALLOWED_PORTS = [
+    '3000',
+    '8000',
+]
+
 CORS_ALLOW_METHODS = [
     'DELETE',
     'GET',
@@ -87,6 +92,7 @@ CORS_ALLOW_METHODS = [
     'POST',
     'PUT',
 ]
+
 CORS_ALLOW_HEADERS = (
     'accept',
     'accept-encoding',
