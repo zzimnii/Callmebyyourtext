@@ -98,6 +98,7 @@ CORS_ALLOW_METHODS = [
 ]
 
 CORS_ALLOW_HEADERS = (
+    'access-control-allow-origin',
     'accept',
     'accept-encoding',
     'authorization',
