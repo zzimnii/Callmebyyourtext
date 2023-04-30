@@ -121,9 +121,10 @@ class QuestionSerializer(ModelSerializer):
 class QuestionDetailSerializer(ModelSerializer):
     comments = CommentSerializer(many=True, read_only=True)
     writer = serializers.ReadOnlyField(source = 'writer.name')
+    writer_id = serializers.ReadOnlyField(source='writer.id')
     class Meta:
         model = Question
-        fields = ['questionId', 'question', 'writer', 'comments', 'created_at', 'publish']
+        fields = ['questionId', 'question', 'writer', 'writer_id', 'comments', 'created_at', 'publish']
 
         def update(self, instance, validated_data):
             instance.publish = validated_data.get('publish', instance.publish)
