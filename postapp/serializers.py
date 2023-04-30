@@ -17,7 +17,7 @@ class CommentSerializer(ModelSerializer):
     
     class Meta:
         model = Comment
-        fields = ['commentId','comment', 'questionId', 'writer', 'anonymous', 'created_at', 'open_user', 'open_count', 'publish']
+        fields = ['commentId','comment', 'questionId', 'writer', 'anonymous', 'created_at', 'open_user', 'open_count', 'like_count', 'publish']
 
         def update(self, instance, validated_data):
             instance.publish = validated_data.get('publish', instance.publish)
