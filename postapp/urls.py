@@ -20,7 +20,7 @@ beQuestion_router = SimpleRouter(trailing_slash=False)
 beQuestion_router.register('bequestions', BeQuestionViewSet, basename='beQuestion')
 
 beQuestionList_router = SimpleRouter(trailing_slash=False)
-beQuestionList_router.register('bequestionList', BeQuestionListSet, basename='beqlist')
+beQuestionList_router.register('bequestionlist', BeQuestionListSet, basename='beqlist')
 
 beComment_router = SimpleRouter(trailing_slash=False)
 beComment_router.register('becomments', BeCommentViewSet, basename='becomment')
