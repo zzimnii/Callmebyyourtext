@@ -107,6 +107,8 @@ class BeQuestionViewSet(ModelViewSet):
             return BeQuestionDetailSerializer
         if self.action == "update": 
             return BeQuestionDetailSerializer
+        if self.action == "delete":
+            return BeQuestionDetailSerializer
         
         return BeQuestionSerializer
 
@@ -119,6 +121,21 @@ class BeQuestionViewSet(ModelViewSet):
             print(update_serial.accept)
             if update_serial.is_valid():
                 update_serial.save()
+    
+    def destroy(self, request, *args, **kwargs):
+        question_id = self.kwargs['pk']
+        question = get_object_or_404(BeQuestion, beQuestionId=question_id)
+
+        access_token = self.request.META.get('HTTP_AUTHORIZATION', '').split(' ')[1]
+        decoded = jwt.decode(access_token, algorithms=['HS256'], verify=False)
+        user_id = decoded['user_id']
+        loginUser = User.objects.get(pk=user_id)
+
+        if loginUser.id == question.ownerId.id:
+            instance = self.get_object()
+            self.perform_destroy(instance)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({"data": request.data}, status=status.HTTP_400_BAD_REQUEST)
 
 #UserId별 선물 받은 질문 리스트(post하면 accept이 True로..)
 class BeQuestionListSet(ModelViewSet):
