@@ -185,15 +185,23 @@ class CommentViewSet(ModelViewSet):
 
     #답변 생성하면 포인트 +50                       -> 내 질문에 내가 답변하는거 막아야하나?
     def perform_create(self, serializer):
+        question_id = self.kwargs['questionId']
+        question = get_object_or_404(Question, questionId=question_id)
+
         if self.request.user.id == None:            # 로그인 안해도 답변 남길 수 있음
             serializer.save(writer=self.request.user.id)
         else:                                       # 로그인 유저는 답변 남기면 포인트 +50
             loginUser = self.request.user
-            serializer.save(writer=self.request.user)
-            loginUser.point += 50
-            update_serial=PointSerializer(loginUser, data=self.request.data, partial=True)
-            if update_serial.is_valid():
-                update_serial.save()
+            # 내 질문에 내가 답변 X
+            if question.writer.id == loginUser.id:
+                print('자기 질문 답변 금지')
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+            else:
+                serializer.save(writer=self.request.user)
+                loginUser.point += 50
+                update_serial=PointSerializer(loginUser, data=self.request.data, partial=True)
+                if update_serial.is_valid():
+                    update_serial.save()
 
     #답변 누르면 포인트 차감
     def retrieve(self, request, pk=None, **kwargs):
@@ -344,27 +352,27 @@ class BeCommentViewSet(ModelViewSet):
 
     #답변 생성하면 포인트 +50                       -> 내 질문에 내가 답변하는거 막아야하나?
     def perform_create(self, serializer):
+        question_id = self.kwargs['beQuestionId']
+        question = get_object_or_404(BeQuestion, beQuestionId=question_id)
+
         if self.request.user.id == None:            # 로그인 안해도 답변 남길 수 있음
             serializer.save(writer=self.request.user.id)
         else:                                       # 로그인 유저는 답변 남기면 포인트 +50
-            access_token = self.request.META.get('HTTP_AUTHORIZATION', '').split(' ')[1]
-            decoded = jwt.decode(access_token, algorithms=['HS256'], verify=False)
-            user_id = decoded['user_id']
-            writer = User.objects.get(pk=user_id)
-            serializer.save(writer=writer)
-
-            serializer.save(writer=writer)
-            writer.point += 50
-            update_serial=PointSerializer(writer, data=self.request.data, partial=True)
-            if update_serial.is_valid():
-                update_serial.save()
-
-            # loginUser = self.request.user
-            # serializer.save(writer=self.request.user)
-            # loginUser.point += 50
-            # update_serial=PointSerializer(loginUser, data=self.request.data, partial=True)
-            # if update_serial.is_valid():
-            #     update_serial.save()
+            loginUser = self.request.user
+            # 내 질문에 내가 답변 X
+            if question.ownerId.id == loginUser.id:
+                print('자기 질문 답변 금지')
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+            else:
+                access_token = self.request.META.get('HTTP_AUTHORIZATION', '').split(' ')[1]
+                decoded = jwt.decode(access_token, algorithms=['HS256'], verify=False)
+                user_id = decoded['user_id']
+                writer = User.objects.get(pk=user_id)
+                serializer.save(writer=writer)
+                writer.point += 50
+                update_serial=PointSerializer(writer, data=self.request.data, partial=True)
+                if update_serial.is_valid():
+                    update_serial.save()
         
     #답변 누르면 포인트 차감
     def retrieve(self, request, pk=None, **kwargs):
