@@ -85,17 +85,15 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL = False
 
 CORS_ORIGIN_WHITELIST = [
-    'http://localhost:3000',
-    'http://localhost:8000',
+    'www.callmebyyourtext.com:80',
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
+    'www.callmebyyourtext.com:80',
 ]
 
 CORS_ALLOWED_PORTS = [
-    '3000',
-    '8000',
+    '80',
 ]
 
 CORS_ALLOW_METHODS = [
