@@ -179,7 +179,7 @@ class CommentViewSet(ModelViewSet):
             return CommentCreateSerializer
         if self.action == 'update':
             return CommentSerializer
-        if self.action == 'delete':
+        if self.action == "delete":
             return CommentSerializer
         return CommentCreateSerializer
 
@@ -275,7 +275,15 @@ class CommentViewSet(ModelViewSet):
         user_id = decoded['user_id']
         loginUser = User.objects.get(pk=user_id)
 
-        if loginUser.id == question.writer.id:
+        if loginUser.id == question.writer.id :
+            print(loginUser.id)
+            print(question.writer.id)
+            instance = self.get_object()
+            self.perform_destroy(instance)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        elif loginUser.id == comment.writer.id:
+            print(loginUser.id)
+            print(comment.writer.id)
             instance = self.get_object()
             self.perform_destroy(instance)
             return Response(status=status.HTTP_204_NO_CONTENT)
