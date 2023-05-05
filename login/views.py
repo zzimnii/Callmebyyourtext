@@ -9,7 +9,7 @@ from rest_framework.authentication import SessionAuthentication, TokenAuthentica
 from django.contrib.auth import login, logout, authenticate
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
-from blossom.settings import JWT_SECRET_KEY
+from blossom.settings.base import JWT_SECRET_KEY
 import jwt
 # from rest_framework_simplejwt.views import TokenObtainPairView
 

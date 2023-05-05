@@ -13,7 +13,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
 from .permissions import IsOwnerOrReadOnly, IsOwnerBeOrReadOnly
 import jwt
 from login.models import User
-from blossom.settings import JWT_SECRET_KEY
+from blossom.settings.base import JWT_SECRET_KEY
 
 
 #질문 CRUD
