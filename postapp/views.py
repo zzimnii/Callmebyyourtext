@@ -33,6 +33,8 @@ class QuestionViewSet(ModelViewSet):
             return QuestionDetailSerializer
         if self.action == "update":
             return QuestionDetailSerializer
+        if self.action == "delete":
+            return QuestionDetailSerializer
         
         return QuestionSerializer
 
@@ -74,6 +76,20 @@ class QuestionViewSet(ModelViewSet):
             serializer=LoginSerializer()
         return Response(serializer.data, status=status.HTTP_401_UNAUTHORIZED)
 
+    def destroy(self, request, *args, **kwargs):
+        question_id = self.kwargs['pk']
+        question = get_object_or_404(Question, questionId=question_id)
+
+        access_token = self.request.META.get('HTTP_AUTHORIZATION', '').split(' ')[1]
+        decoded = jwt.decode(access_token, algorithms=['HS256'], verify=False)
+        user_id = decoded['user_id']
+        loginUser = User.objects.get(pk=user_id)
+
+        if loginUser.id == question.writer.id:
+            instance = self.get_object()
+            self.perform_destroy(instance)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({"data": request.data}, status=status.HTTP_400_BAD_REQUEST)
 
 #UserId별 질문 리스트
 class QuestionListSet(ModelViewSet):
