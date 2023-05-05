@@ -1,6 +1,6 @@
 from pathlib import Path
-import datetime
-import os
+import datetime, os, json
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -9,25 +9,29 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
+
+secret_file = BASE_DIR / 'secrets.json'
+with open(secret_file) as file:
+    secrets = json.loads(file.read())
+
+def get_secret(setting, secrets_dict=secrets):
+    try:
+        return secrets_dict[setting]
+    except KeyError:
+        error_msg = f'Set the {setting} environmnet variable'
+        raise ImproperlyConfigured(error_msg)
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-6@_1qwao5!lm1m6-kkqzj($7)s3mp5(xu9@le!sn8xa51g=n3y'
-
-
-
+SECRET_KEY = get_secret('SECRET_KEY')
 
 # Application definition
-
-INSTALLED_APPS = [
+DJANGO_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    'login',
-    'postapp',
-    
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
@@ -35,8 +39,17 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_auth',
     'allauth',
-
 ]
+
+PROJECT_APPS = [
+    'login',
+    'postapp',
+]
+
+THIRD_PARTY_APPS = [
+    
+]
+
 
 REST_FRAMEWORK = {
 	'DEFAULT_AUTHENTICATION_CLASSES': [

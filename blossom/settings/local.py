@@ -5,6 +5,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
+INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + THIRD_PARTY_APPS
+
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
