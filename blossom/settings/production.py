@@ -4,6 +4,29 @@ from .base import *
 DEBUG = False
 
 ALLOWED_HOSTS = ['13.209.43.178', 'callmebyyourtext.site'] # 도메인, ip
+CORS_ALLOWED_PORTS = ['80', '443',]
+
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+
+CORS_ALLOW_HEADERS = (
+    'access-control-allow-origin',
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+)
 
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + THIRD_PARTY_APPS
 
