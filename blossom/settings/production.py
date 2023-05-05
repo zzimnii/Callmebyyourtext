@@ -3,7 +3,7 @@ from .base import *
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['13.209.43.178'] # 도메인, ip
+ALLOWED_HOSTS = ['13.209.43.178', 'callmebyyourtext.site'] # 도메인, ip
 
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + THIRD_PARTY_APPS
 
