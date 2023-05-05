@@ -163,6 +163,8 @@ class CommentViewSet(ModelViewSet):
             return CommentCreateSerializer
         if self.action == 'update':
             return CommentSerializer
+        if self.action == 'delete':
+            return CommentSerializer
         return CommentCreateSerializer
 
     #답변 생성하면 포인트 +50                       -> 내 질문에 내가 답변하는거 막아야하나?
@@ -237,6 +239,24 @@ class CommentViewSet(ModelViewSet):
 
                 return Response(update_serial.data, status=status.HTTP_200_OK)
             
+    def destroy(self, request, *args, **kwargs):
+        question_id = self.kwargs['questionId']
+        question = get_object_or_404(Question, questionId=question_id)  # questionId로 해당 질문 받아옴
+        if self.request.user.id != None:                        # 로그인 했을때
+            comment_id = self.kwargs['pk']
+            comment = get_object_or_404(Comment, pk=comment_id)
+
+        access_token = self.request.META.get('HTTP_AUTHORIZATION', '').split(' ')[1]
+        decoded = jwt.decode(access_token, algorithms=['HS256'], verify=False)
+        user_id = decoded['user_id']
+        loginUser = User.objects.get(pk=user_id)
+
+        if loginUser.id == question.writer.id:
+            instance = self.get_object()
+            self.perform_destroy(instance)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({"data": request.data}, status=status.HTTP_400_BAD_REQUEST)
+
     def get_queryset(self, **kwargs): # Override
         question_id = self.kwargs['questionId']
         return self.queryset.filter(questionId=question_id)
@@ -301,6 +321,9 @@ class BeCommentViewSet(ModelViewSet):
             return BeCommentSerializer
         if self.action == 'create':
             return BeCommentCreateSerializer
+        if self.action == "delete":
+            return BeCommentSerializer
+        
         return BeCommentCreateSerializer
 
     #답변 생성하면 포인트 +50                       -> 내 질문에 내가 답변하는거 막아야하나?
@@ -361,9 +384,28 @@ class BeCommentViewSet(ModelViewSet):
             print('로그인후 이용해주세요')
             serializer=LoginSerializer()
         return Response(serializer.data, status=status.HTTP_401_UNAUTHORIZED)
+    
+    def destroy(self, request, *args, **kwargs):
+        question_id = self.kwargs['beQuestionId']
+        question = get_object_or_404(BeQuestion, beQuestionId=question_id)  # questionId로 해당 질문 받아옴
+        if self.request.user.id != None:                        # 로그인 했을때
+            comment_id = self.kwargs['pk']
+            comment = get_object_or_404(BeComment, pk=comment_id)
+
+        access_token = self.request.META.get('HTTP_AUTHORIZATION', '').split(' ')[1]
+        decoded = jwt.decode(access_token, algorithms=['HS256'], verify=False)
+        user_id = decoded['user_id']
+        loginUser = User.objects.get(pk=user_id)
+
+        if loginUser.id == question.ownerId.id:
+            instance = self.get_object()
+            self.perform_destroy(instance)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({"data": request.data}, status=status.HTTP_400_BAD_REQUEST)
+    
         
     def get_queryset(self, **kwargs): # Override
-        question_id = self.kwargs['bequestion_id']
+        question_id = self.kwargs['beQuestionId']
         print(question_id)
         return self.queryset.filter(questionId=question_id)
 
