@@ -85,13 +85,11 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL = False
 
 CORS_ORIGIN_WHITELIST = [
-    'www.callmebyyourtext.com:80',
-    'www.callmebyyourtext.com:443',
+    'https://callmebyyourtext.site',
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    'www.callmebyyourtext.com:80',
-    'www.callmebyyourtext.com:443',
+'https://callmebyyourtext.site',
 ]
 
 CORS_ALLOWED_PORTS = [
