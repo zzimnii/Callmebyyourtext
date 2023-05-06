@@ -89,7 +89,7 @@ CORS_ORIGIN_WHITELIST = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-'https://callmebyyourtext.site',
+    'https://callmebyyourtext.site',
 ]
 
 CORS_ALLOWED_PORTS = [
