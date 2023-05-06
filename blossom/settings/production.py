@@ -1,9 +1,9 @@
 # 운영환경
 from .base import *
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['13.209.43.178', 'callmebyyourtext.site'] # 도메인, ip
+ALLOWED_HOSTS = ['13.209.43.178', 'callmebyyourtext.site', 'ec2-13-209-43-178.ap-northeast-2.compute.amazonaws.com'] # 도메인, ip
 CORS_ALLOWED_PORTS = ['80', '443',]
 
 CORS_ALLOW_METHODS = [
