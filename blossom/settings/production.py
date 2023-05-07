@@ -7,6 +7,7 @@ ALLOWED_HOSTS = ['13.209.43.178',
                  'callmebyyourtext.xyz', 
                  'http://localhost:3000',
                  'localhost:3000',
+                 '127.0.0.1'
                  ] # 도메인, ip
 
 CORS_ALLOWED_PORTS = ['80', '443', '3000']

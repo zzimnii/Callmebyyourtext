@@ -87,7 +87,7 @@ class LoginView(generics.GenericAPIView):
         email = request.data.get('email')
         password = request.data.get('password')
         user = User.objects.get(email=request.data['email'])
-        # user = authenticate(request, username=email, password=password)
+        user = authenticate(request, username=email, password=password)
         if user is not None:
             refresh = RefreshToken.for_user(user)
             serializer = ProfileSerializer(user)
