@@ -86,15 +86,20 @@ CORS_ORIGIN_ALLOW_ALL = False
 
 CORS_ORIGIN_WHITELIST = [
     'https://callmebyyourtext.site',
+    'http://localhost:3000',
+    'http://localhost:8000',
 ]
 
 CORS_ALLOWED_ORIGINS = [
     'https://callmebyyourtext.site',
+    'http://localhost:3000',
+    'http://localhost:8000',
 ]
 
 CORS_ALLOWED_PORTS = [
     '80',
     '443',
+    '3000',
 ]
 
 CORS_ALLOW_METHODS = [
